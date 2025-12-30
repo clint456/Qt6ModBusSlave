@@ -858,10 +858,12 @@ ApplicationWindow {
         }
     }
 
-    // 添加日志
+    // 添加日志（自动滚动到底部）
     function addLog(message) {
         var timestamp = Qt.formatDateTime(new Date(), "hh:mm:ss")
         logDisplay.append("[" + timestamp + "] " + message)
+        // 自动滚动到底部
+        logDisplay.cursorPosition = logDisplay.length
     }
 
     Component.onCompleted: {
