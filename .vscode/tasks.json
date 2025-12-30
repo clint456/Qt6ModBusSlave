@@ -1,0 +1,17 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Build Qt6ModBusSlave",
+			"type": "shell",
+			"command": "D:/Qt/Tools/CMake_64/bin/cmake.exe",
+			"args": [
+				"--build",
+				"build/Desktop_Qt_6_10_1_MinGW_64_bit-Debug",
+				"-j8"
+			],
+			"problemMatcher": [],
+			"group": "build"
+		}
+	]
+}
