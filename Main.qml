@@ -8,7 +8,7 @@ ApplicationWindow {
     width: 1200
     height: 800
     visible: true
-    title: "Modbus 从站服务器"
+    title: "Modbus TCP/RTU从站服务器"
     minimumWidth: 1000
     minimumHeight: 700
 
@@ -20,44 +20,25 @@ ApplicationWindow {
         anchors.margins: 15
         spacing: 12
 
-        // 标题
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 50
-            color: "#3498db"
-            radius: 5
-
-            Label {
-                anchors.centerIn: parent
-                text: "Modbus TCP/RTU 从站服务器"
-                font.pixelSize: 22
-                font.bold: true
-                color: "white"
-            }
-        }
-
         // 服务器控制区域
         GroupBox {
             title: "服务器控制"
             Layout.fillWidth: true
-            Layout.preferredHeight: 140
+            Layout.preferredHeight: 100
             font.bold: true
 
             RowLayout {
                 anchors.fill: parent
                 spacing: 15
-
                 // TCP 控制
                 GroupBox {
                     title: "TCP 模式"
                     Layout.fillWidth: true
                     Layout.fillHeight: true
 
-                    GridLayout {
+                    RowLayout {
                         anchors.fill: parent
-                        columns: 2
-                        rowSpacing: 8
-                        columnSpacing: 10
+                        spacing: 10
 
                         Label { text: "端口:" }
                         TextField {
@@ -70,14 +51,12 @@ ApplicationWindow {
                         Button {
                             id: startTcpButton
                             text: "启动 TCP"
-                            Layout.columnSpan: 2
-                            Layout.fillWidth: true
                             enabled: modbusServer && !modbusServer.running
                             onClicked: {
                                 if (modbusServer) {
                                     var port = parseInt(tcpPortField.text)
                                     addLog("尝试启动 TCP 服务器，端口: " + port)
-                                    if (modbusServer.startTcp(port)) {
+                                    if (modbusServer. startTcp(port)) {
                                         statusLabel.text = "TCP 服务器已启动"
                                         addLog("TCP 服务器启动成功")
                                     } else {
@@ -93,15 +72,13 @@ ApplicationWindow {
 
                 // RTU 控制
                 GroupBox {
-                    title: "RTU 模式"
+                    title:  "RTU 模式"
                     Layout.fillWidth: true
                     Layout.fillHeight: true
 
-                    GridLayout {
+                    RowLayout {
                         anchors.fill: parent
-                        columns: 2
-                        rowSpacing: 8
-                        columnSpacing: 10
+                        spacing: 10
 
                         Label { text: "串口:" }
                         TextField {
@@ -111,25 +88,23 @@ ApplicationWindow {
                             Layout.preferredWidth: 100
                         }
 
-                        Label { text: "波特率:" }
+                        Label { text:  "波特率:" }
                         ComboBox {
-                            id: baudRateCombo
+                            id:  baudRateCombo
                             model: ["9600", "19200", "38400", "57600", "115200"]
                             currentIndex: 0
-                            Layout.preferredWidth: 100
+                            Layout. preferredWidth: 100
                         }
 
                         Button {
                             id: startRtuButton
                             text: "启动 RTU"
-                            Layout.columnSpan: 2
-                            Layout.fillWidth: true
                             enabled: modbusServer && !modbusServer.running
                             onClicked: {
                                 if (modbusServer) {
-                                    var baudRate = parseInt(baudRateCombo.currentText)
-                                    addLog("尝试启动 RTU 服务器，串口: " + rtuPortField.text + ", 波特率: " + baudRate)
-                                    if (modbusServer.startRtu(rtuPortField.text, baudRate)) {
+                                    var baudRate = parseInt(baudRateCombo. currentText)
+                                    addLog("尝试启动 RTU 服务器，串口: " + rtuPortField. text + ", 波特率:  " + baudRate)
+                                    if (modbusServer.startRtu(rtuPortField. text, baudRate)) {
                                         statusLabel.text = "RTU 服务器已启动"
                                         addLog("RTU 服务器启动成功")
                                     } else {
@@ -149,7 +124,7 @@ ApplicationWindow {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
 
-                    ColumnLayout {
+                    RowLayout {
                         anchors.fill: parent
                         spacing: 8
 
@@ -184,17 +159,14 @@ ApplicationWindow {
         GroupBox {
             title: "服务器状态"
             Layout.fillWidth: true
-            Layout.preferredHeight: 100
+            Layout.preferredHeight: 50
             font.bold: true
 
-            GridLayout {
+            RowLayout {
                 anchors.fill: parent
-                columns: 4
-                rowSpacing: 8
-                columnSpacing: 15
-
-                Label { 
-                    text: "运行状态:" 
+                spacing: 8
+                Label {
+                    text: "运行状态:"
                     font.bold: true
                 }
                 Label {
@@ -205,8 +177,8 @@ ApplicationWindow {
                     font.bold: true
                 }
 
-                Label { 
-                    text: "模式:" 
+                Label {
+                    text: "模式:"
                     font.bold: true
                 }
                 Label {
@@ -218,8 +190,8 @@ ApplicationWindow {
                     font.pixelSize: 14
                 }
 
-                Label { 
-                    text: "请求计数:" 
+                Label {
+                    text: "请求计数:"
                     font.bold: true
                 }
                 Label {
@@ -230,8 +202,8 @@ ApplicationWindow {
                     font.bold: true
                 }
 
-                Label { 
-                    text: "状态消息:" 
+                Label {
+                    text: "状态消息:"
                     font.bold: true
                 }
                 Label {
@@ -260,12 +232,12 @@ ApplicationWindow {
                     id: dataTabBar
                     Layout.fillWidth: true
 
-                    TabButton { 
-                        text: "文件寄存器" 
+                    TabButton {
+                        text: "文件寄存器"
                         font.pixelSize: 13
                     }
-                    TabButton { 
-                        text: "传感器配置" 
+                    TabButton {
+                        text: "传感器配置"
                         font.pixelSize: 13
                     }
                 }
@@ -325,7 +297,7 @@ ApplicationWindow {
                                             value: 10
                                             editable: true
                                             Layout.fillWidth: true
-                                            
+
                                             ToolTip.visible: hovered
                                             ToolTip.text: "Modbus标准限制：单次最多读取126个记录（252字节）"
                                         }
@@ -343,18 +315,18 @@ ApplicationWindow {
                                             Layout.fillWidth: true
                                             onClicked: writeFileRecord()
                                         }
-                                        
+
                                         Button {
                                             text: "🔍 查询文件内容"
                                             Layout.columnSpan: 2
                                             Layout.fillWidth: true
                                             onClicked: queryFileContent()
-                                            
+
                                             background: Rectangle {
                                                 color: parent.hovered ? "#3498db" : "#2980b9"
                                                 radius: 3
                                             }
-                                            
+
                                             contentItem: Text {
                                                 text: parent.text
                                                 color: "white"
@@ -731,7 +703,7 @@ ApplicationWindow {
         var startRecord = recordNumberSpinBox.value
         var count = recordCountSpinBox.value
         var fileNum = fileNumberSpinBox.value
-        
+
         addLog("===== 读取文件记录 (FC 20) =====")
         addLog("📁 文件号: " + fileNum)
         addLog("📋 起始记录: " + startRecord)
@@ -746,7 +718,7 @@ ApplicationWindow {
         var startRecord = recordNumberSpinBox.value
         var count = recordCountSpinBox.value
         var fileNum = fileNumberSpinBox.value
-        
+
         addLog("===== 写入文件记录 (FC 21) =====")
         addLog("📁 文件号: " + fileNum)
         addLog("📋 起始记录: " + startRecord)
@@ -756,21 +728,21 @@ ApplicationWindow {
         addLog("ℹ️ 说明: 通过Modbus客户端发送写入请求")
         addLog("————————————————————")
     }
-    
+
     // 查询文件内容
     function queryFileContent() {
         if (!modbusServer) {
             addLog("错误: 服务器未初始化")
             return
         }
-        
+
         var fileNum = fileNumberSpinBox.value
         addLog("🔍 正在查询文件 " + fileNum + " 的内容...")
         addLog("")
-        
+
         // 调用C++后端查询
         var content = modbusServer.queryFileContent(fileNum, 50)
-        
+
         // 将内容按行输出到日志
         var lines = content.split('\n')
         for (var i = 0; i < lines.length; i++) {
@@ -778,7 +750,7 @@ ApplicationWindow {
                 addLog(lines[i])
             }
         }
-        
+
         addLog("")
     }
 
@@ -786,7 +758,7 @@ ApplicationWindow {
     function readAddressFile() {
         var startAddr = fileAddressSpinBox.value
         var count = fileRegisterCountSpinBox.value
-        
+
         addLog("===== 读取地址文件 (FC 203) =====")
         addLog("📍 起始地址: " + startAddr)
         addLog("📋 寄存器数: " + count)
@@ -799,7 +771,7 @@ ApplicationWindow {
     function writeAddressFile() {
         var startAddr = fileAddressSpinBox.value
         var count = fileRegisterCountSpinBox.value
-        
+
         addLog("===== 写入地址文件 (FC 204) =====")
         addLog("📍 起始地址: " + startAddr)
         addLog("📋 寄存器数: " + count)
@@ -826,7 +798,7 @@ ApplicationWindow {
         for (var i = 0; i < sensors.length; i++) {
             var sensor = sensors[i]
             var line = ""
-            
+
             // 格式化每个字段，使用固定宽度
             line += String(sensor.index).padEnd(8, ' ')
             line += String(sensor.pointName).padEnd(25, ' ')
@@ -836,7 +808,7 @@ ApplicationWindow {
             line += String(sensor.minValue).padEnd(12, ' ')
             line += String(sensor.maxValue).padEnd(12, ' ')
             line += String(sensor.note)
-            
+
             result += line + "\n"
         }
 
@@ -869,17 +841,17 @@ ApplicationWindow {
     Component.onCompleted: {
         // modbusServer 和 sensorManager 已经通过 setContextProperty 注入
         // 直接使用即可，但需要验证它们是否存在
-        
+
         addLog("QML 界面已加载")
-        
+
         if (modbusServer) {
             addLog("服务器已初始化")
-            
+
             // 连接信号
             modbusServer.requestReceived.connect(function(fc) {
                 addLog("收到请求，功能码: " + fc)
             })
-            
+
             modbusServer.errorOccurred.connect(function(error) {
                 addLog("错误: " + error)
             })
@@ -889,13 +861,13 @@ ApplicationWindow {
 
         if (sensorManager) {
             addLog("传感器管理器已初始化")
-            
+
             // 连接传感器管理器信号
             sensorManager.sensorsLoaded.connect(function(count) {
                 addLog("已加载 " + count + " 个传感器配置")
                 displaySensorList()
             })
-            
+
             sensorManager.errorOccurred.connect(function(error) {
                 addLog("传感器错误: " + error)
             })
