@@ -60,6 +60,10 @@ ApplicationWindow {
                                         statusLabel.text = "TCP 服务器已启动"
                                         addLog("TCP 服务器启动成功")
                                     } else {
+
+
+
+
                                         addLog("TCP 服务器启动失败")
                                     }
                                 } else {
@@ -199,6 +203,23 @@ ApplicationWindow {
                     text: modbusServer ? modbusServer.requestCount.toString() : "0"
                     color: "#2980b9"
                     font.pixelSize: 14
+                    font.bold: true
+                }
+
+                Label {
+                    text: "最后功能码:"
+                    font.bold: true
+                }
+                Label {
+                    id: lastFcLabel
+                    text: {
+                        if (!modbusServer || modbusServer.lastFunctionCode === 0) return "无"
+                        var fc = modbusServer.lastFunctionCode
+                        var fcName = getFunctionCodeName(fc)
+                        return fc + " (0x" + fc.toString(16).toUpperCase() + ") - " + fcName
+                    }
+                    color: "#27ae60"
+                    font.pixelSize: 13
                     font.bold: true
                 }
 
@@ -836,6 +857,25 @@ ApplicationWindow {
         logDisplay.append("[" + timestamp + "] " + message)
         // 自动滚动到底部
         logDisplay.cursorPosition = logDisplay.length
+    }
+
+    // 获取功能码名称（新增）
+    function getFunctionCodeName(fc) {
+        var fcNames = {
+            1: "读线圈",
+            2: "读离散输入",
+            3: "读保持寄存器",
+            4: "读输入寄存器",
+            5: "写单个线圈",
+            6: "写单个寄存器",
+            15: "写多个线圈",
+            16: "写多个寄存器",
+            20: "读文件记录",
+            21: "写文件记录",
+            203: "读文件(自定义)",
+            204: "写文件(自定义)"
+        }
+        return fcNames[fc] || "未知功能"
     }
 
     Component.onCompleted: {

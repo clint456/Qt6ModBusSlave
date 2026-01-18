@@ -17,6 +17,7 @@ ModbusServer::ModbusServer(QObject *parent)
     , m_running(false)
     , m_mode(ModeTCP)
     , m_requestCount(0)
+    , m_lastFunctionCode(0)
 {
     // 创建数据存储
     m_dataStore = new ModbusDataStore(this);
@@ -162,6 +163,12 @@ QByteArray ModbusServer::processTcpRequest(const QByteArray &adu)
 
     qDebug() << "TCP 请求 - 功能码:" << functionCode << "(0x" + QString::number(functionCode, 16).toUpper() + ")" 
              << "PDU 长度:" << pdu.size() << "字节";
+
+    // 更新最后接收到的功能码
+    if (m_lastFunctionCode != functionCode) {
+        m_lastFunctionCode = functionCode;
+        emit lastFunctionCodeChanged(functionCode);
+    }
 
     // 路由到对应处理器
     QByteArray responsePdu = routeFunctionCode(functionCode, pdu);

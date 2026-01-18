@@ -22,10 +22,16 @@
 class ModbusServer : public QObject
 {
     Q_OBJECT
+    // 描述：
+    // 我有一个叫 running 的属性
+    // 类型是 bool
+    // 读它用 isRunning()
+    // 状态变化用 runningChanged 标记
     Q_PROPERTY(bool running READ isRunning NOTIFY runningChanged)
     Q_PROPERTY(ModbusMode mode READ mode NOTIFY modeChanged)
     Q_PROPERTY(QString statusMessage READ statusMessage NOTIFY statusMessageChanged)
     Q_PROPERTY(int requestCount READ requestCount NOTIFY requestCountChanged)
+    Q_PROPERTY(int lastFunctionCode READ lastFunctionCode NOTIFY lastFunctionCodeChanged)
 
 public:
     explicit ModbusServer(QObject *parent = nullptr);
@@ -43,17 +49,18 @@ public:
     Q_INVOKABLE void stop();
 
     // 数据初始化
-    Q_INVOKABLE void initializeData();
+    Q_INVOKABLE void initializeData(); 
     
     // 文件查询
     Q_INVOKABLE QStringList getFileList() const;
     Q_INVOKABLE QString queryFileContent(int fileNumber, int maxRecords = 100);
 
     // 获取器
-    bool isRunning() const { return m_running; }
+    bool isRunning() const { return m_running; } // const表示该方法不会修改类的成员变量
     ModbusMode mode() const { return m_mode; }
     QString statusMessage() const { return m_statusMessage; }
     int requestCount() const { return m_requestCount; }
+    int lastFunctionCode() const { return m_lastFunctionCode; }
 
     // 获取数据存储对象（用于UI更新）
     ModbusDataStore* dataStore() const { return m_dataStore; }
@@ -63,6 +70,7 @@ signals:
     void modeChanged(ModbusMode mode);
     void statusMessageChanged(const QString &message);
     void requestCountChanged(int count);
+    void lastFunctionCodeChanged(int functionCode);
     void requestReceived(quint8 functionCode);
     void errorOccurred(const QString &error);
 
@@ -103,6 +111,7 @@ private:
     ModbusMode m_mode;
     QString m_statusMessage;
     int m_requestCount;
+    int m_lastFunctionCode;
 };
 
 #endif // MODBUSSERVER_H

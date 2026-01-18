@@ -7,8 +7,8 @@
 
 int main(int argc, char *argv[])
 {
-    QGuiApplication app(argc, argv);
-
+    QGuiApplication app(argc, argv); // 创建qt应用程序
+ 
     qDebug() << "应用程序启动...";
 
     // 创建 Modbus 服务器
@@ -19,9 +19,10 @@ int main(int argc, char *argv[])
     SensorModelManager sensorManager;
     qDebug() << "SensorModelManager 已创建";
 
-    QQmlApplicationEngine engine;
+    QQmlApplicationEngine engine; // 创建QML引擎
 
-    // 将对象暴露给 QML
+    // 将C++对象暴露给 QML
+    // 这可以让QML对象直接访问C++对象
     engine.rootContext()->setContextProperty(QStringLiteral("modbusServer"), &modbusServer);
     engine.rootContext()->setContextProperty(QStringLiteral("sensorManager"), &sensorManager);
     qDebug() << "对象已暴露给 QML";
@@ -41,7 +42,8 @@ int main(int argc, char *argv[])
         Qt::QueuedConnection);
     
     qDebug() << "准备加载 QML...";
-    engine.loadFromModule(QStringLiteral("Qt6ModBusSlave"), QStringLiteral("Main"));
+    // 加载QML模块（QT6新特性，替代旧版的load()【动态加载方法】）
+    engine.loadFromModule(QStringLiteral("Qt6ModBusSlave"), QStringLiteral("Main")); 
 
     if (engine.rootObjects().isEmpty()) {
         qCritical() << "QML 加载失败，没有根对象创建！";
