@@ -4,53 +4,62 @@ on:
   push: 
     branches: [ "master" ]
   pull_request: 
-    branches:  [ "master" ]
+    branches: [ "master" ]
 
-jobs: 
-  build:
+jobs:
+  build: 
     runs-on: ${{ matrix.os }}
 
     strategy:
       fail-fast: false
 
-      matrix: 
-        os: [ubuntu-latest, windows-latest]
-        build_type: [Release]
-        c_compiler: [gcc, clang, cl]
+      matrix:
         include: 
-          - os:  windows-latest
+          # Windows - Qt 6.8.x 使用新的架构命名
+          - os: windows-latest
             c_compiler: cl
-            cpp_compiler:  cl
-            qt_arch: win64_msvc2019_64
+            cpp_compiler: cl
+            qt_version: '6.8.0'  # 使用 6.8.0 而不是 6.8.3
+            qt_arch: win64_msvc2022_64  # 注意：改为 msvc2022
+            build_type: Release
+
+          # Linux GCC
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
-            qt_arch: ''  # Linux 不需要指定架构
+            qt_version: '6.8.0'
+            qt_arch: linux_gcc_64  # 注意：改为 linux_gcc_64
+            build_type: Release
+
+          # Linux Clang
           - os:  ubuntu-latest
             c_compiler: clang
             cpp_compiler: clang++
-            qt_arch: ''  # Linux 不需要指定架构
-        exclude:
-          - os: windows-latest
-            c_compiler:  gcc
-          - os: windows-latest
-            c_compiler: clang
-          - os: ubuntu-latest
-            c_compiler: cl
+            qt_version: '6.8.0'
+            qt_arch: linux_gcc_64
+            build_type:  Release
 
-    steps: 
+    steps:
     - uses: actions/checkout@v4
 
-    - name:  Install Qt
-      uses: jurplel/install-qt-action@v4.3.0
+    # 调试步骤：查看可用的架构
+    - name: Query available Qt architectures
+      shell: bash
+      run: |
+        python3 -m pip install aqtinstall
+        echo "=== Available architectures for Qt ${{ matrix.qt_version }} ==="
+        python3 -m aqt list-qt ${{ runner.os == 'Windows' && 'windows' || 'linux' }} desktop --arch ${{ matrix.qt_version }} || true
+        echo "=== Available modules ==="
+        python3 -m aqt list-qt ${{ runner.os == 'Windows' && 'windows' || 'linux' }} desktop --modules ${{ matrix.qt_version }} ${{ matrix.qt_arch }} || true
+
+    - name: Install Qt
+      uses:  jurplel/install-qt-action@v4.3.0
       with:
-        version: '6.8.3'
-        host: ${{ runner.os == 'Linux' && 'linux' || 'windows' }}
-        target:  'desktop'
-        arch:  ${{ matrix.qt_arch }}  # Linux 会自动选择，Windows 需要指定
+        version:  ${{ matrix.qt_version }}
+        target: 'desktop'
+        arch: ${{ matrix.qt_arch }}
         modules: 'qtserialport'
         cache:  true
-        cache-key-prefix: 'install-qt-action-${{ matrix.os }}'
         setup-python: true
         set-env: true
 
@@ -69,41 +78,37 @@ jobs:
           libxcb-xinerama0 \
           libxcb-cursor0
 
-    - name: Set reusable strings
-      id: strings
-      shell: bash
-      run: |
-        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+    - name: Setup MSVC
+      if: runner.os == 'Windows'
+      uses: ilammy/msvc-dev-cmd@v1
 
     - name: Configure CMake
-      run: >
-        cmake -B ${{ steps.strings.outputs.build-output-dir }}
-        -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
-        -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
-        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-        -DCMAKE_PREFIX_PATH=${{ env.Qt6_DIR }}
-        -S ${{ github.workspace }}
+      shell: bash
+      run: |
+        cmake -B build \
+          -DCMAKE_CXX_COMPILER=${{ matrix. cpp_compiler }} \
+          -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} \
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+          -DCMAKE_PREFIX_PATH=${{ env.Qt6_DIR }}
 
     - name: Build
-      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
+      run: cmake --build build --config ${{ matrix.build_type }} --parallel
 
     - name: Test
-      working-directory: ${{ steps.strings.outputs.build-output-dir }}
-      run: ctest --build-config ${{ matrix.build_type }}
+      working-directory: build
+      run: ctest --build-config ${{ matrix.build_type }} --output-on-failure
       continue-on-error: true
 
     - name: Upload artifacts (Windows)
       if: runner.os == 'Windows'
       uses: actions/upload-artifact@v4
-      with: 
-        name: Qt6ModBusSlave-Windows-${{ matrix.c_compiler }}
-        path: |
-          ${{ steps.strings.outputs.build-output-dir }}/${{ matrix.build_type }}/appQt6ModBusSlave.exe
-          ${{ steps.strings. outputs.build-output-dir }}/${{ matrix.build_type }}/*.dll
+      with:
+        name: Qt6ModBusSlave-Windows
+        path: build/${{ matrix.build_type }}/appQt6ModBusSlave.exe
 
     - name: Upload artifacts (Linux)
-      if: runner.os == 'Linux'
+      if: runner.os == 'Linux' && matrix.c_compiler == 'gcc'
       uses: actions/upload-artifact@v4
       with: 
-        name: Qt6ModBusSlave-Linux-${{ matrix.c_compiler }}
-        path: ${{ steps.strings. outputs.build-output-dir }}/appQt6ModBusSlave
+        name: Qt6ModBusSlave-Linux
+        path: build/appQt6ModBusSlave
