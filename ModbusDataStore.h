@@ -16,24 +16,24 @@ public:
     explicit ModbusDataStore(QObject *parent = nullptr);
 
     // 线圈操作
-    bool readCoil(quint16 address) const;
+    Q_INVOKABLE bool readCoil(quint16 address) const;
     bool readCoils(quint16 startAddress, quint16 count, QBitArray &values) const;
     bool writeCoil(quint16 address, bool value);
     bool writeCoils(quint16 startAddress, const QBitArray &values);
 
     // 离散输入操作
-    bool readDiscreteInput(quint16 address) const;
+    Q_INVOKABLE bool readDiscreteInput(quint16 address) const;
     bool readDiscreteInputs(quint16 startAddress, quint16 count, QBitArray &values) const;
     bool writeDiscreteInput(quint16 address, bool value);
 
     // 保持寄存器操作
-    quint16 readHoldingRegister(quint16 address) const;
+    Q_INVOKABLE quint16 readHoldingRegister(quint16 address) const;
     bool readHoldingRegisters(quint16 startAddress, quint16 count, QVector<quint16> &values) const;
     bool writeHoldingRegister(quint16 address, quint16 value);
     bool writeHoldingRegisters(quint16 startAddress, const QVector<quint16> &values);
 
     // 输入寄存器操作
-    quint16 readInputRegister(quint16 address) const;
+    Q_INVOKABLE quint16 readInputRegister(quint16 address) const;
     bool readInputRegisters(quint16 startAddress, quint16 count, QVector<quint16> &values) const;
     bool writeInputRegister(quint16 address, quint16 value);
 
@@ -48,7 +48,9 @@ public:
 
 signals:
     void coilChanged(quint16 address, bool value);
+    void discreteInputChanged(quint16 address, bool value);
     void holdingRegisterChanged(quint16 address, quint16 value);
+    void inputRegisterChanged(quint16 address, quint16 value);
 
 private:
     QMap<quint16, bool> m_coils;

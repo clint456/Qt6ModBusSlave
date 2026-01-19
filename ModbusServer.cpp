@@ -414,26 +414,124 @@ QString ModbusServer::queryFileContent(int fileNumber, int maxRecords)
     QString info = m_fileStore->getFileInfo(fileNumber);
     result += info + "\n\n";
     
-    // 获取所有记录
-    QMap<quint16, quint16> records = m_fileStore->getAllRecords(fileNumber, maxRecords);
+    // 获取所有记录（原始字节数据）
+    QMap<quint16, QByteArray> records = m_fileStore->getAllRecordsRaw(fileNumber, maxRecords);
     
     if (records.isEmpty()) {
         result += "该文件暂无数据写入\n";
     } else {
         result += QString("已写入的记录（最多显示 %1 条）：\n").arg(maxRecords);
-        result += "记录号    十进制值    十六进制值\n";
-        result += "------    --------    ----------\n";
+        result += "记录号  十六进制                            ASCII字符串\n";
+        result += "------  --------------------------------    ----------------------\n";
         
         for (auto it = records.begin(); it != records.end(); ++it) {
             quint16 recordNum = it.key();
-            quint16 value = it.value();
-            result += QString("%1      %2          0x%3\n")
+            QByteArray data = it.value();
+            
+            // 十六进制显示
+            QString hexStr;
+            for (int i = 0; i < data.size(); ++i) {
+                hexStr += QString("%1 ").arg((unsigned char)data[i], 2, 16, QChar('0')).toUpper();
+            }
+            hexStr = hexStr.leftJustified(36, ' ');
+            
+            // ASCII显示（可打印字符）
+            QString asciiStr;
+            for (int i = 0; i < data.size(); ++i) {
+                char c = data[i];
+                if (c >= 32 && c <= 126) {  // 可打印字符
+                    asciiStr += c;
+                } else {
+                    asciiStr += '.';
+                }
+            }
+            
+            result += QString("%1    %2  %3\n")
                     .arg(recordNum, 6)
-                    .arg(value, 8)
-                    .arg(value, 4, 16, QChar('0')).toUpper();
+                    .arg(hexStr)
+                    .arg(asciiStr);
         }
         
         result += QString("\n总计: %1 条记录\n").arg(records.size());
+    }
+    
+    result += "\n" + QString("=").repeated(40) + "\n";
+    return result;
+}
+
+QString ModbusServer::queryAddressFile(int startAddress, int count)
+{
+    QString result;
+    result += QString("========== 保持寄存器查询 ==========\n\n");
+    result += QString("起始地址: %1\n").arg(startAddress);
+    result += QString("查询数量: %1\n\n").arg(count);
+    
+    // 从ModbusDataStore读取保持寄存器
+    QMap<quint16, QByteArray> data;
+    bool hasData = false;
+    
+    for (int i = 0; i < count; ++i) {
+        quint16 addr = startAddress + i;
+        quint16 value = m_dataStore->readHoldingRegister(addr);
+        
+        // 将16位值转换为大端字节序的2字节数据
+        QByteArray bytes(2, 0);
+        bytes[0] = static_cast<char>((value >> 8) & 0xFF);  // 高字节
+        bytes[1] = static_cast<char>(value & 0xFF);         // 低字节
+        
+        // 只记录非零的寄存器
+        if (value != 0) {
+            hasData = true;
+        }
+        data[addr] = bytes;
+    }
+    
+    if (!hasData) {
+        result += "该地址区域暂无数据写入（所有值为0）\n";
+    } else {
+        result += QString("保持寄存器数据（显示 %1 个地址）：\n").arg(count);
+        result += "地址    十进制值  十六进制                        ASCII字符串\n";
+        result += "------  --------  --------------------------------  ----------------------\n";
+        
+        for (auto it = data.begin(); it != data.end(); ++it) {
+            quint16 address = it.key();
+            QByteArray bytes = it.value();
+            
+            // 转换回16位值用于十进制显示
+            quint16 value = ((unsigned char)bytes[0] << 8) | (unsigned char)bytes[1];
+            
+            // 十六进制显示
+            QString hexStr;
+            for (int i = 0; i < bytes.size(); ++i) {
+                hexStr += QString("%1 ").arg((unsigned char)bytes[i], 2, 16, QChar('0')).toUpper();
+            }
+            hexStr = hexStr.leftJustified(34, ' ');
+            
+            // ASCII显示（可打印字符）
+            QString asciiStr;
+            for (int i = 0; i < bytes.size(); ++i) {
+                char c = bytes[i];
+                if (c >= 32 && c <= 126) {  // 可打印字符
+                    asciiStr += c;
+                } else {
+                    asciiStr += '.';
+                }
+            }
+            
+            result += QString("%1    %2    %3  %4\n")
+                    .arg(address, 6)
+                    .arg(value, 8)
+                    .arg(hexStr)
+                    .arg(asciiStr);
+        }
+        
+        // 统计非零值数量
+        int nonZeroCount = 0;
+        for (auto it = data.begin(); it != data.end(); ++it) {
+            quint16 value = ((unsigned char)it.value()[0] << 8) | (unsigned char)it.value()[1];
+            if (value != 0) nonZeroCount++;
+        }
+        result += QString("\n总计: %1 个地址，其中 %2 个非零值\n").arg(data.size()).arg(nonZeroCount);
     }
     
     result += "\n" + QString("=").repeated(40) + "\n";

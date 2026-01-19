@@ -46,8 +46,8 @@ enum ModbusDataType {
 
 // 常量定义
 namespace ModbusConst {
-    constexpr quint16 MAX_COILS = 65536;
-    constexpr quint16 MAX_REGISTERS = 65536;
+    constexpr quint16 MAX_COILS = 65535;
+    constexpr quint16 MAX_REGISTERS = 65535;
     constexpr quint16 MAX_READ_COILS = 2000;
     constexpr quint16 MAX_READ_REGISTERS = 125;
     constexpr quint16 MAX_WRITE_COILS = 1968;

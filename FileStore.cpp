@@ -288,6 +288,26 @@ QMap<quint16, quint16> FileStore::getAllRecords(quint16 fileNumber, quint16 maxR
     return result;
 }
 
+QMap<quint16, QByteArray> FileStore::getAllRecordsRaw(quint16 fileNumber, quint16 maxRecords) const
+{
+    QReadLocker locker(&m_lock);
+    QMap<quint16, QByteArray> result;
+    
+    if (!m_files.contains(fileNumber)) {
+        return result;
+    }
+    
+    FileRecord *file = m_files[fileNumber];
+    QMap<quint16, QByteArray> records = file->getAllRecords();
+    
+    int count = 0;
+    for (auto it = records.begin(); it != records.end() && count < maxRecords; ++it, ++count) {
+        result[it.key()] = it.value();
+    }
+    
+    return result;
+}
+
 // ========== FileAddressStore 实现 ==========
 
 FileAddressStore::FileAddressStore(QObject *parent)
@@ -389,4 +409,19 @@ QByteArray FileAddressStore::buildErrorResponse(quint8 errorCode, quint8 excepti
     response.append(static_cast<char>(errorCode));
     response.append(static_cast<char>(exceptionCode));
     return response;
+}
+
+QMap<quint16, QByteArray> FileAddressStore::getAddressData(quint16 startAddress, quint16 count) const
+{
+    QReadLocker locker(&m_lock);
+    QMap<quint16, QByteArray> result;
+    
+    for (quint16 i = 0; i < count; ++i) {
+        quint16 addr = startAddress + i;
+        if (m_data.contains(addr)) {
+            result[addr] = m_data[addr];
+        }
+    }
+    
+    return result;
 }

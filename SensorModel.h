@@ -25,6 +25,7 @@ public:
     QString minValue;       // 起始值/最小值
     QString maxValue;       // 最大值
     QString note;           // 备注
+    QString readOnly;       // 只读
 
     SensorItem()
         : index(0), type(Coil) {}

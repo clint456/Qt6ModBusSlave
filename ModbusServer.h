@@ -32,6 +32,7 @@ class ModbusServer : public QObject
     Q_PROPERTY(QString statusMessage READ statusMessage NOTIFY statusMessageChanged)
     Q_PROPERTY(int requestCount READ requestCount NOTIFY requestCountChanged)
     Q_PROPERTY(int lastFunctionCode READ lastFunctionCode NOTIFY lastFunctionCodeChanged)
+    Q_PROPERTY(ModbusDataStore* dataStore READ dataStore CONSTANT)
 
 public:
     explicit ModbusServer(QObject *parent = nullptr);
@@ -54,6 +55,7 @@ public:
     // 文件查询
     Q_INVOKABLE QStringList getFileList() const;
     Q_INVOKABLE QString queryFileContent(int fileNumber, int maxRecords = 100);
+    Q_INVOKABLE QString queryAddressFile(int startAddress, int count = 50);
 
     // 获取器
     bool isRunning() const { return m_running; } // const表示该方法不会修改类的成员变量

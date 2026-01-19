@@ -57,6 +57,7 @@ public:
     QStringList getFileList() const;
     QString getFileInfo(quint16 fileNumber) const;
     QMap<quint16, quint16> getAllRecords(quint16 fileNumber, quint16 maxRecords = 100) const;
+    QMap<quint16, QByteArray> getAllRecordsRaw(quint16 fileNumber, quint16 maxRecords = 100) const;
 
 signals:
     void fileRead(quint16 fileNumber, quint16 recordNumber, quint16 length);
@@ -80,6 +81,9 @@ public:
     void initializeRegion(quint16 startAddress, quint16 count);
     QByteArray handleReadFile(const QByteArray &request);
     QByteArray handleWriteFile(const QByteArray &request);
+    
+    // 查询功能
+    QMap<quint16, QByteArray> getAddressData(quint16 startAddress, quint16 count) const;
 
 signals:
     void registerRead(quint16 address, quint16 count);

@@ -46,7 +46,7 @@ bool SensorModelManager::importFromExcel(const QString &filePath)
 
         // 跳过标题行
         if (!headerSkipped) {
-            if (line.contains("点组") || line.contains("点名称") || line.contains("序号")) {
+            if (line.contains("地址") || line.contains("点位名称") || line.contains("寄存器类型")) {
                 headerSkipped = true;
                 continue;
             }
@@ -113,7 +113,7 @@ bool SensorModelManager::parseExcelRow(const QStringList &fields, SensorItem &it
         // 解析点类型
         if (item.pointType.contains("线圈")) {
             item.type = SensorItem::Coil;
-        } else if (item.pointType.contains("离散") || item.pointType.contains("高载")) {
+        } else if (item.pointType.contains("离散") ) {
             item.type = SensorItem::DiscreteInput;
         } else if (item.pointType.contains("保持")) {
             item.type = SensorItem::HoldingRegister;
@@ -125,6 +125,11 @@ bool SensorModelManager::parseExcelRow(const QStringList &fields, SensorItem &it
     // 初始值
     if (fieldIndex < fields.size()) {
         item.initialValue = fields[fieldIndex++].trimmed();
+    }
+
+    // 描述
+    if (fieldIndex < fields.size()) {
+        item.note = fields[fieldIndex++].trimmed();
     }
 
     // 单位
@@ -142,9 +147,9 @@ bool SensorModelManager::parseExcelRow(const QStringList &fields, SensorItem &it
         item.maxValue = fields[fieldIndex++].trimmed();
     }
 
-    // 备注
+    // 只读
     if (fieldIndex < fields.size()) {
-        item.note = fields[fieldIndex++].trimmed();
+        item.readOnly = fields[fieldIndex++].trimmed();
     }
 
     return !item.pointName.isEmpty();
@@ -276,6 +281,7 @@ QVariantList SensorModelManager::getSensorList() const
         map["minValue"] = item.minValue;
         map["maxValue"] = item.maxValue;
         map["note"] = item.note;
+        map["readOnly"] = item.readOnly;
         list.append(map);
     }
     

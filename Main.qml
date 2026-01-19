@@ -25,7 +25,7 @@ ApplicationWindow {
             title: "服务器控制"
             Layout.fillWidth: true
             Layout.preferredHeight: 100
-            font.bold: true
+            font.bold: false
 
             RowLayout {
                 anchors.fill: parent
@@ -164,26 +164,26 @@ ApplicationWindow {
             title: "服务器状态"
             Layout.fillWidth: true
             Layout.preferredHeight: 50
-            font.bold: true
+            font.bold: false
 
             RowLayout {
                 anchors.fill: parent
                 spacing: 8
                 Label {
                     text: "运行状态:"
-                    font.bold: true
+                    font.bold: false
                 }
                 Label {
                     id: runningLabel
                     text: modbusServer ? (modbusServer.running ? "● 运行中" : "○ 已停止") : "○ 未知"
                     color: modbusServer && modbusServer.running ? "#27ae60" : "#e74c3c"
                     font.pixelSize: 14
-                    font.bold: true
+                    font.bold: false
                 }
 
                 Label {
                     text: "模式:"
-                    font.bold: true
+                    font.bold: false
                 }
                 Label {
                     id: modeLabel
@@ -196,19 +196,19 @@ ApplicationWindow {
 
                 Label {
                     text: "请求计数:"
-                    font.bold: true
+                    font.bold: false
                 }
                 Label {
                     id: requestCountLabel
                     text: modbusServer ? modbusServer.requestCount.toString() : "0"
                     color: "#2980b9"
                     font.pixelSize: 14
-                    font.bold: true
+                    font.bold: false
                 }
 
                 Label {
                     text: "最后功能码:"
-                    font.bold: true
+                    font.bold: false
                 }
                 Label {
                     id: lastFcLabel
@@ -220,12 +220,12 @@ ApplicationWindow {
                     }
                     color: "#27ae60"
                     font.pixelSize: 13
-                    font.bold: true
+                    font.bold: false
                 }
 
                 Label {
                     text: "状态消息:"
-                    font.bold: true
+                    font.bold: false
                 }
                 Label {
                     id: statusLabel
@@ -243,11 +243,12 @@ ApplicationWindow {
             title: "文件寄存器与传感器配置"
             Layout.fillWidth: true
             Layout.fillHeight: true
-            font.bold: true
+            Layout.minimumHeight: 300
+            font.bold: false
 
             ColumnLayout {
                 anchors.fill: parent
-                spacing: 8
+                // spacing: 8
 
                 TabBar {
                     id: dataTabBar
@@ -267,176 +268,133 @@ ApplicationWindow {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     currentIndex: dataTabBar.currentIndex
-
                     // Tab 1: 文件寄存器
                     Item {
                         ColumnLayout {
                             anchors.fill: parent
-                            spacing: 10
+                            spacing: 8
 
+                            // 使用 RowLayout 实现三栏
                             RowLayout {
                                 Layout.fillWidth: true
+                                Layout.fillHeight: true
                                 spacing: 10
 
                                 // 标准文件记录
                                 GroupBox {
                                     title: "标准文件记录 (FC 20/21)"
                                     Layout.fillWidth: true
-                                    Layout.preferredHeight: 160
+                                    Layout.fillHeight: true
+                                    font.bold: false
 
-                                    GridLayout {
+                                    // 内容用 ColumnLayout + GridLayout 组合
+                                    ColumnLayout {
                                         anchors.fill: parent
-                                        columns: 2
-                                        rowSpacing: 8
-                                        columnSpacing: 10
+                                        spacing: 6
 
-                                        Label { text: "文件号:" }
-                                        SpinBox {
-                                            id: fileNumberSpinBox
-                                            from: 0
-                                            to: 65535
-                                            value: 1
-                                            editable: true
+                                        GridLayout {
                                             Layout.fillWidth: true
-                                        }
+                                            Layout.fillHeight: true
+                                            columns: 2
+                                            rowSpacing: 6
+                                            columnSpacing: 8
 
-                                        Label { text: "记录号:" }
-                                        SpinBox {
-                                            id: recordNumberSpinBox
-                                            from: 0
-                                            to: 9999
-                                            value: 0
-                                            editable: true
-                                            Layout.fillWidth: true
-                                        }
-
-                                        Label { text: "记录数:" }
-                                        SpinBox {
-                                            id: recordCountSpinBox
-                                            from: 1
-                                            to: 126
-                                            value: 10
-                                            editable: true
-                                            Layout.fillWidth: true
-
-                                            ToolTip.visible: hovered
-                                            ToolTip.text: "Modbus标准限制：单次最多读取126个记录（252字节）"
-                                        }
-
-                                        Button {
-                                            text: "读取文件"
-                                            Layout.columnSpan: 2
-                                            Layout.fillWidth: true
-                                            onClicked: readFileRecord()
-                                        }
-
-                                        Button {
-                                            text: "写入测试数据"
-                                            Layout.columnSpan: 2
-                                            Layout.fillWidth: true
-                                            onClicked: writeFileRecord()
-                                        }
-
-                                        Button {
-                                            text: "🔍 查询文件内容"
-                                            Layout.columnSpan: 2
-                                            Layout.fillWidth: true
-                                            onClicked: queryFileContent()
-
-                                            background: Rectangle {
-                                                color: parent.hovered ? "#3498db" : "#2980b9"
-                                                radius: 3
+                                            Label { text: "文件号:" }
+                                            SpinBox {
+                                                id: fileNumberSpinBox
+                                                from: 0; to: 65535; value: 1; editable: true
+                                                Layout.fillWidth: true
                                             }
 
-                                            contentItem: Text {
-                                                text: parent.text
-                                                color: "white"
-                                                horizontalAlignment: Text.AlignHCenter
-                                                verticalAlignment: Text.AlignVCenter
-                                                font.pixelSize: 12
-                                                font.bold: true
+                                            Label { text: "记录号:" }
+                                            SpinBox {
+                                                id: recordNumberSpinBox
+                                                from: 0; to: 9999; value: 0; editable: true
+                                                Layout.fillWidth: true
+                                            }
+
+                                            Label { text: "记录数:" }
+                                            SpinBox {
+                                                id: recordCountSpinBox
+                                                from: 1; to: 126; value: 10; editable: true
+                                                Layout.fillWidth: true
+                                                ToolTip.visible: hovered
+                                                ToolTip.text: "Modbus标准限制：单次最多读取126个记录（252字节）"
+                                            }
+                                        }
+
+                                        // 按钮区域（靠底）
+                                        ColumnLayout {
+                                            Layout.fillWidth: true
+                                            Layout.alignment: Qt.AlignBottom
+
+                                            Button {
+                                                text: "🔍 查询文件内容"
+                                                Layout.fillWidth: true
+                                                onClicked: queryFileContent()
+                                                // background: Rectangle {
+                                                //     color: parent.hovered ? "#3498db" : "#2980b9"
+                                                //     radius: 3
+                                                // }
+                                                // contentItem: Text {
+                                                //     text: parent.text
+                                                //     color: "white"
+                                                //     horizontalAlignment: Text.AlignHCenter
+                                                //     verticalAlignment: Text.AlignVCenter
+                                                //     font.pixelSize: 12
+                                                //     font.bold: false
+                                                // }
                                             }
                                         }
                                     }
                                 }
 
-                                // 地址文件
+                                // 保持寄存器查询
                                 GroupBox {
-                                    title: "地址文件 (FC 203/204)"
+                                    title: "保持寄存器查询 (FC 3/16)"
                                     Layout.fillWidth: true
-                                    Layout.preferredHeight: 160
+                                    Layout.fillHeight: true
+                                    font.bold: false
 
-                                    GridLayout {
+                                    ColumnLayout {
                                         anchors.fill: parent
-                                        columns: 2
-                                        rowSpacing: 8
-                                        columnSpacing: 10
+                                        spacing: 6
 
-                                        Label { text: "起始地址:" }
-                                        SpinBox {
-                                            id: fileAddressSpinBox
-                                            from: 0
-                                            to: 65535
-                                            value: 1000
-                                            editable: true
+                                        GridLayout {
                                             Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            columns: 2
+                                            rowSpacing: 6
+                                            columnSpacing: 8
+
+                                            Label { text: "起始地址:" }
+                                            SpinBox {
+                                                id: fileAddressSpinBox
+                                                from: 0; to: 65535; value: 1000; editable: true
+                                                Layout.fillWidth: true
+                                            }
+
+                                            Label { text: "寄存器数:" }
+                                            SpinBox {
+                                                id: fileRegisterCountSpinBox
+                                                from: 1; to: 125; value: 20; editable: true
+                                                Layout.fillWidth: true
+                                            }
                                         }
 
-                                        Label { text: "寄存器数:" }
-                                        SpinBox {
-                                            id: fileRegisterCountSpinBox
-                                            from: 1
-                                            to: 125
-                                            value: 10
-                                            editable: true
+                                        // 按钮靠底
+                                        ColumnLayout {
                                             Layout.fillWidth: true
-                                        }
+                                            Layout.alignment: Qt.AlignBottom
 
-                                        Item { Layout.fillHeight: true; Layout.columnSpan: 2 }
-
-                                        Button {
-                                            text: "读取地址文件"
-                                            Layout.columnSpan: 2
-                                            Layout.fillWidth: true
-                                            onClicked: readAddressFile()
-                                        }
-
-                                        Button {
-                                            text: "写入测试数据"
-                                            Layout.columnSpan: 2
-                                            Layout.fillWidth: true
-                                            onClicked: writeAddressFile()
+                                            Button {
+                                                text: "🔍 查询保持寄存器"
+                                                Layout.fillWidth: true
+                                                onClicked: queryAddressFileContent()
+                                            }
                                         }
                                     }
                                 }
-
-                                // 文件信息
-                                GroupBox {
-                                    title: "文件信息"
-                                    Layout.fillWidth: true
-                                    Layout.preferredHeight: 160
-
-                                    ScrollView {
-                                        anchors.fill: parent
-                                        clip: true
-
-                                        Label {
-                                            text: "已创建文件:\n• 文件 1: 温度数据\n  (256 记录)\n• 文件 2: 状态数据\n  (128 记录)\n\n地址存储:\n• 1000-1199\n  (200 寄存器)"
-                                            wrapMode: Text.WordWrap
-                                            font.pixelSize: 11
-                                        }
-                                    }
-                                }
-                            }
-
-                            // 简化的提示信息区域
-                            Label {
-                                Layout.fillWidth: true
-                                Layout.topMargin: 5
-                                text: "💡 提示：所有操作结果将显示在下方的操作日志中"
-                                font.pixelSize: 11
-                                color: "#7f8c8d"
-                                wrapMode: Text.WordWrap
                             }
                         }
                     }
@@ -450,7 +408,7 @@ ApplicationWindow {
                             // Excel 导入导出控制
                             Rectangle {
                                 Layout.fillWidth: true
-                                Layout.preferredHeight: 80
+                                Layout.preferredHeight: 40
                                 color: "#ecf0f1"
                                 radius: 5
                                 border.color: "#bdc3c7"
@@ -458,13 +416,13 @@ ApplicationWindow {
 
                                 RowLayout {
                                     anchors.fill: parent
-                                    anchors.margins: 15
-                                    spacing: 15
+                                    // anchors.margins: 15
+                                    // spacing: 15
 
                                     Label {
-                                        text: "📊 传感器配置管理"
-                                        font.pixelSize: 14
-                                        font.bold: true
+                                        text: "传感器配置管理"
+                                        // font.pixelSize: 14
+                                        font.bold: false
                                     }
 
                                     Rectangle {
@@ -497,13 +455,32 @@ ApplicationWindow {
                                         onClicked: applySensorsToServer()
                                     }
 
+                                    Button {
+                                        text: "测试更新"
+                                        Layout.preferredWidth: 100
+                                        onClicked: {
+                                            addLog("===== 测试数据更新 =====")
+                                            if (modbusServer && modbusServer.dataStore) {
+                                                // 测试写入线圈地址0
+                                                addLog("测试写入线圈 地址0 值true")
+                                                modbusServer.dataStore.writeCoil(0, true)
+                                                
+                                                // 测试写入保持寄存器地址0
+                                                addLog("测试写入保持寄存器 地址0 值999")
+                                                modbusServer.dataStore.writeHoldingRegister(0, 999)
+                                            } else {
+                                                addLog("错误：无法访问数据存储")
+                                            }
+                                        }
+                                    }
+
                                     Item { Layout.fillWidth: true }
 
                                     Label {
                                         text: sensorManager ? ("传感器数: " + sensorManager.sensorCount) : "传感器数: 0"
                                         font.pixelSize: 13
                                         color: "#2980b9"
-                                        font.bold: true
+                                        font.bold: false
                                     }
                                 }
                             }
@@ -516,103 +493,327 @@ ApplicationWindow {
 
                                 ColumnLayout {
                                     anchors.fill: parent
-                                    spacing: 5
+                                    spacing: 0
 
-                                    // 表格标题
+                                    // 表格标题行
                                     Rectangle {
                                         Layout.fillWidth: true
                                         Layout.preferredHeight: 35
-                                        color: "#34495e"
-                                        radius: 3
+                                        color: "#e8e8e8"
+                                        border.color: "#c0c0c0"
+                                        border.width: 1
 
-                                        RowLayout {
+                                        Row {
                                             anchors.fill: parent
-                                            anchors.margins: 5
                                             spacing: 0
 
-                                            Label {
-                                                text: "序号"
-                                                color: "white"
-                                                font.bold: true
-                                                Layout.preferredWidth: 60
-                                                horizontalAlignment: Text.AlignHCenter
+                                            Rectangle {
+                                                width: 60
+                                                height: parent.height
+                                                color: "transparent"
+                                                border.color: "#c0c0c0"
+                                                border.width: 1
+                                                Label {
+                                                    anchors.centerIn: parent
+                                                    text: "地址"
+                                                    font.bold: true
+                                                    font.pixelSize: 12
+                                                }
                                             }
-                                            Label {
-                                                text: "点名称"
-                                                color: "white"
-                                                font.bold: true
-                                                Layout.preferredWidth: 200
+                                            Rectangle {
+                                                width: 180
+                                                height: parent.height
+                                                color: "transparent"
+                                                border.color: "#c0c0c0"
+                                                border.width: 1
+                                                Label {
+                                                    anchors.centerIn: parent
+                                                    text: "点位名称"
+                                                    font.bold: true
+                                                    font.pixelSize: 12
+                                                }
                                             }
-                                            Label {
-                                                text: "点类型"
-                                                color: "white"
-                                                font.bold: true
-                                                Layout.preferredWidth: 120
+                                            Rectangle {
+                                                width: 120
+                                                height: parent.height
+                                                color: "transparent"
+                                                border.color: "#c0c0c0"
+                                                border.width: 1
+                                                Label {
+                                                    anchors.centerIn: parent
+                                                    text: "寄存器类型"
+                                                    font.bold: true
+                                                    font.pixelSize: 12
+                                                }
                                             }
-                                            Label {
-                                                text: "初始值"
-                                                color: "white"
-                                                font.bold: true
-                                                Layout.preferredWidth: 100
+                                            Rectangle {
+                                                width: 80
+                                                height: parent.height
+                                                color: "transparent"
+                                                border.color: "#c0c0c0"
+                                                border.width: 1
+                                                Label {
+                                                    anchors.centerIn: parent
+                                                    text: "初始值"
+                                                    font.bold: true
+                                                    font.pixelSize: 12
+                                                }
                                             }
-                                            Label {
-                                                text: "单位"
-                                                color: "white"
-                                                font.bold: true
-                                                Layout.preferredWidth: 80
+                                            Rectangle {
+                                                width: 80
+                                                height: parent.height
+                                                color: "transparent"
+                                                border.color: "#c0c0c0"
+                                                border.width: 1
+                                                Label {
+                                                    anchors.centerIn: parent
+                                                    text: "当前值"
+                                                    font.bold: true
+                                                    font.pixelSize: 12
+                                                    color: "#2196F3"
+                                                }
                                             }
-                                            Label {
-                                                text: "起始值"
-                                                color: "white"
-                                                font.bold: true
-                                                Layout.preferredWidth: 100
+                                            Rectangle {
+                                                width: 200
+                                                height: parent.height
+                                                color: "transparent"
+                                                border.color: "#c0c0c0"
+                                                border.width: 1
+                                                Label {
+                                                    anchors.centerIn: parent
+                                                    text: "描述"
+                                                    font.bold: true
+                                                    font.pixelSize: 12
+                                                }
                                             }
-                                            Label {
-                                                text: "最大值"
-                                                color: "white"
-                                                font.bold: true
-                                                Layout.preferredWidth: 100
+                                            Rectangle {
+                                                width: 100
+                                                height: parent.height
+                                                color: "transparent"
+                                                border.color: "#c0c0c0"
+                                                border.width: 1
+                                                Label {
+                                                    anchors.centerIn: parent
+                                                    text: "单位"
+                                                    font.bold: true
+                                                    font.pixelSize: 12
+                                                }
                                             }
-                                            Label {
-                                                text: "备注"
-                                                color: "white"
-                                                font.bold: true
-                                                Layout.fillWidth: true
+                                            Rectangle {
+                                                width: 80
+                                                height: parent.height
+                                                color: "transparent"
+                                                border.color: "#c0c0c0"
+                                                border.width: 1
+                                                Label {
+                                                    anchors.centerIn: parent
+                                                    text: "最小值"
+                                                    font.bold: true
+                                                    font.pixelSize: 12
+                                                }
+                                            }
+                                            Rectangle {
+                                                width: 80
+                                                height: parent.height
+                                                color: "transparent"
+                                                border.color: "#c0c0c0"
+                                                border.width: 1
+                                                Label {
+                                                    anchors.centerIn: parent
+                                                    text: "最大值"
+                                                    font.bold: true
+                                                    font.pixelSize: 12
+                                                }
+                                            }
+                                            Rectangle {
+                                                width: 80
+                                                height: parent.height
+                                                color: "transparent"
+                                                border.color: "#c0c0c0"
+                                                border.width: 1
+                                                Label {
+                                                    anchors.centerIn: parent
+                                                    text: "只读"
+                                                    font.bold: true
+                                                    font.pixelSize: 12
+                                                }
                                             }
                                         }
                                     }
 
-                                    // 数据显示区域
-                                    ScrollView {
+                                    // 数据显示区域 - ListView
+                                    ListView {
+                                        id: sensorListView
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
                                         clip: true
+                                        boundsBehavior: Flickable.StopAtBounds
+                                        
+                                        model: ListModel {
+                                            id: sensorListModel
+                                        }
 
-                                        TextArea {
-                                            id: sensorListDisplay
-                                            readOnly: true
-                                            wrapMode: TextEdit.NoWrap
-                                            font.family: "Consolas, Monaco, monospace"
-                                            font.pixelSize: 11
-                                            text: "点击'导入 Excel/CSV'加载传感器配置...\n\n支持格式：\n• CSV 文件 (*.csv)\n• Tab 分隔文件 (*.txt)\n\n文件格式示例：\n序号    点名称    点类型    初始值    单位    起始值    最大值    备注\n0       流行达标  线圈      0         -       -         -         开关\n1       手自动模式 线圈     0         -       -         -         模式"
-                                            background: Rectangle {
-                                                color: "#fafafa"
-                                                border.color: "#dcdcdc"
-                                                border.width: 1
-                                                radius: 3
+                                        delegate: Rectangle {
+                                            width: sensorListView.width
+                                            height: 30
+                                            color: index % 2 === 0 ? "#ffffff" : "#f5f5f5"
+                                            border.color: "#e0e0e0"
+                                            border.width: 1
+
+                                            Row {
+                                                anchors.fill: parent
+                                                spacing: 0
+
+                                                Rectangle {
+                                                    width: 60
+                                                    height: parent.height
+                                                    color: "transparent"
+                                                    border.color: "#e0e0e0"
+                                                    border.width: 1
+                                                    Label {
+                                                        anchors.centerIn: parent
+                                                        text: model.address !== undefined ? model.address : ""
+                                                        font.pixelSize: 11
+                                                    }
+                                                }
+                                                Rectangle {
+                                                    width: 180
+                                                    height: parent.height
+                                                    color: "transparent"
+                                                    border.color: "#e0e0e0"
+                                                    border.width: 1
+                                                    Label {
+                                                        anchors.verticalCenter: parent.verticalCenter
+                                                        anchors.left: parent.left
+                                                        anchors.leftMargin: 8
+                                                        anchors.right: parent.right
+                                                        anchors.rightMargin: 8
+                                                        text: model.pointName || ""
+                                                        font.pixelSize: 11
+                                                        elide: Text.ElideRight
+                                                    }
+                                                }
+                                                Rectangle {
+                                                    width: 120
+                                                    height: parent.height
+                                                    color: "transparent"
+                                                    border.color: "#e0e0e0"
+                                                    border.width: 1
+                                                    Label {
+                                                        anchors.centerIn: parent
+                                                        text: model.pointType || ""
+                                                        font.pixelSize: 11
+                                                    }
+                                                }
+                                                Rectangle {
+                                                    width: 80
+                                                    height: parent.height
+                                                    color: "transparent"
+                                                    border.color: "#e0e0e0"
+                                                    border.width: 1
+                                                    Label {
+                                                        anchors.centerIn: parent
+                                                        text: model.initialValue || ""
+                                                        font.pixelSize: 11
+                                                    }
+                                                }
+                                                Rectangle {
+                                                    width: 80
+                                                    height: parent.height
+                                                    color: "transparent"
+                                                    border.color: "#e0e0e0"
+                                                    border.width: 1
+                                                    Label {
+                                                        anchors.centerIn: parent
+                                                        text: model.currentValue || ""
+                                                        font.pixelSize: 11
+                                                        font.bold: true
+                                                        color: "#2196F3"
+                                                    }
+                                                }
+                                                Rectangle {
+                                                    width: 200
+                                                    height: parent.height
+                                                    color: "transparent"
+                                                    border.color: "#e0e0e0"
+                                                    border.width: 1
+                                                    Label {
+                                                        anchors.verticalCenter: parent.verticalCenter
+                                                        anchors.left: parent.left
+                                                        anchors.leftMargin: 8
+                                                        anchors.right: parent.right
+                                                        anchors.rightMargin: 8
+                                                        text: model.note || ""
+                                                        font.pixelSize: 11
+                                                        elide: Text.ElideRight
+                                                    }
+                                                }
+                                                Rectangle {
+                                                    width: 100
+                                                    height: parent.height
+                                                    color: "transparent"
+                                                    border.color: "#e0e0e0"
+                                                    border.width: 1
+                                                    Label {
+                                                        anchors.centerIn: parent
+                                                        text: model.unit || ""
+                                                        font.pixelSize: 11
+                                                    }
+                                                }
+                                                Rectangle {
+                                                    width: 80
+                                                    height: parent.height
+                                                    color: "transparent"
+                                                    border.color: "#e0e0e0"
+                                                    border.width: 1
+                                                    Label {
+                                                        anchors.centerIn: parent
+                                                        text: model.minValue || ""
+                                                        font.pixelSize: 11
+                                                    }
+                                                }
+                                                Rectangle {
+                                                    width: 80
+                                                    height: parent.height
+                                                    color: "transparent"
+                                                    border.color: "#e0e0e0"
+                                                    border.width: 1
+                                                    Label {
+                                                        anchors.centerIn: parent
+                                                        text: model.maxValue || ""
+                                                        font.pixelSize: 11
+                                                    }
+                                                }
+                                                Rectangle {
+                                                    width: 80
+                                                    height: parent.height
+                                                    color: "transparent"
+                                                    border.color: "#e0e0e0"
+                                                    border.width: 1
+                                                    Label {
+                                                        anchors.centerIn: parent
+                                                        text: model.readOnly || ""
+                                                        font.pixelSize: 11
+                                                    }
+                                                }
                                             }
+                                        }
+
+                                        // 空状态提示
+                                        Label {
+                                            anchors.centerIn: parent
+                                            visible: sensorListModel.count === 0
+                                            text: "点击'导入 Excel/CSV'加载传感器配置...\n\n支持格式：\n• CSV 文件 (*.csv)\n• Tab 分隔文件 (*.txt)"
+                                            font.pixelSize: 12
+                                            color: "#666666"
+                                            horizontalAlignment: Text.AlignHCenter
+                                        }
+
+                                        ScrollBar.vertical: ScrollBar {
+                                            policy: ScrollBar.AsNeeded
                                         }
                                     }
                                 }
-                            }
-
-                            // 使用说明
-                            Label {
-                                Layout.fillWidth: true
-                                text: "💡 提示：导入后点击'应用到服务器'将配置写入 Modbus 数据存储"
-                                font.pixelSize: 11
-                                color: "#7f8c8d"
-                                wrapMode: Text.WordWrap
                             }
                         }
                     }
@@ -625,7 +826,7 @@ ApplicationWindow {
             title: "操作日志"
             Layout.fillWidth: true
             Layout.preferredHeight: 300
-            font.bold: true
+            font.bold: false
 
             ColumnLayout {
                 anchors.fill: parent
@@ -634,13 +835,6 @@ ApplicationWindow {
                 RowLayout {
                     Layout.fillWidth: true
                     spacing: 10
-
-                    Label {
-                        text: "📋 最近操作记录"
-                        font.pixelSize: 12
-                        color: "#7f8c8d"
-                    }
-
                     Item { Layout.fillWidth: true }
 
                     Button {
@@ -719,37 +913,6 @@ ApplicationWindow {
     }
 
     // 刷新数据显示
-    // 读取文件记录（模拟功能码 20）
-    function readFileRecord() {
-        var startRecord = recordNumberSpinBox.value
-        var count = recordCountSpinBox.value
-        var fileNum = fileNumberSpinBox.value
-
-        addLog("===== 读取文件记录 (FC 20) =====")
-        addLog("📁 文件号: " + fileNum)
-        addLog("📋 起始记录: " + startRecord)
-        addLog("📋 记录数: " + count + " (最多126个)")
-        addLog("💾 数据量: " + (count * 2) + " 字节")
-        addLog("ℹ️ 说明: 通过Modbus客户端发送请求查看实际响应")
-        addLog("————————————————————")
-    }
-
-    // 写入文件记录（模拟功能码 21）
-    function writeFileRecord() {
-        var startRecord = recordNumberSpinBox.value
-        var count = recordCountSpinBox.value
-        var fileNum = fileNumberSpinBox.value
-
-        addLog("===== 写入文件记录 (FC 21) =====")
-        addLog("📁 文件号: " + fileNum)
-        addLog("📋 起始记录: " + startRecord)
-        addLog("📋 记录数: " + count)
-        addLog("💾 数据量: " + (count * 2) + " 字节")
-        addLog("✅ 测试数据: 0x1000, 0x1100, 0x1200...")
-        addLog("ℹ️ 说明: 通过Modbus客户端发送写入请求")
-        addLog("————————————————————")
-    }
-
     // 查询文件内容
     function queryFileContent() {
         if (!modbusServer) {
@@ -758,7 +921,7 @@ ApplicationWindow {
         }
 
         var fileNum = fileNumberSpinBox.value
-        addLog("🔍 正在查询文件 " + fileNum + " 的内容...")
+        addLog("正在查询文件 " + fileNum + " 的内容...")
         addLog("")
 
         // 调用C++后端查询
@@ -776,64 +939,124 @@ ApplicationWindow {
     }
 
     // 读取地址文件（模拟功能码 203）
-    function readAddressFile() {
+    // 查询地址文件内容
+    function queryAddressFileContent() {
+        if (!modbusServer) {
+            addLog("错误: 服务器未初始化")
+            return
+        }
+
         var startAddr = fileAddressSpinBox.value
         var count = fileRegisterCountSpinBox.value
+        addLog("正在查询保持寄存器...")
+        addLog("")
 
-        addLog("===== 读取地址文件 (FC 203) =====")
-        addLog("📍 起始地址: " + startAddr)
-        addLog("📋 寄存器数: " + count)
-        addLog("💾 数据量: " + (count * 2) + " 字节")
-        addLog("ℹ️ 说明: 类似功能码 3，通过地址直接访问")
-        addLog("————————————————————")
-    }
+        // 调用C++后端查询
+        var content = modbusServer.queryAddressFile(startAddr, count)
 
-    // 写入地址文件（模拟功能码 204）
-    function writeAddressFile() {
-        var startAddr = fileAddressSpinBox.value
-        var count = fileRegisterCountSpinBox.value
+        // 将内容按行输出到日志
+        var lines = content.split('\n')
+        for (var i = 0; i < lines.length; i++) {
+            if (lines[i].trim() !== "") {
+                addLog(lines[i])
+            }
+        }
 
-        addLog("===== 写入地址文件 (FC 204) =====")
-        addLog("📍 起始地址: " + startAddr)
-        addLog("📋 寄存器数: " + count)
-        addLog("💾 数据量: " + (count * 2) + " 字节")
-        addLog("✅ 测试数据: 0xAAAA, 0xBBBB, 0xCCCC...")
-        addLog("ℹ️ 说明: 类似功能码 16，通过地址直接写入")
-        addLog("————————————————————")
+        addLog("")
     }
 
     // 显示传感器列表
     function displaySensorList() {
+        console.log("===== displaySensorList 开始 =====")
         if (!sensorManager) {
-            sensorListDisplay.text = "传感器管理器未初始化"
+            console.log("错误：sensorManager 不存在")
+            sensorListModel.clear()
             return
         }
 
         var sensors = sensorManager.getSensorList()
+        console.log("获取到传感器列表，数量:", sensors ? sensors.length : 0)
+        sensorListModel.clear()
+        
         if (!sensors || sensors.length === 0) {
-            sensorListDisplay.text = "没有传感器数据"
+            console.log("传感器列表为空")
             return
         }
 
-        var result = ""
         for (var i = 0; i < sensors.length; i++) {
             var sensor = sensors[i]
-            var line = ""
-
-            // 格式化每个字段，使用固定宽度
-            line += String(sensor.index).padEnd(8, ' ')
-            line += String(sensor.pointName).padEnd(25, ' ')
-            line += String(sensor.pointType).padEnd(15, ' ')
-            line += String(sensor.initialValue).padEnd(12, ' ')
-            line += String(sensor.unit).padEnd(10, ' ')
-            line += String(sensor.minValue).padEnd(12, ' ')
-            line += String(sensor.maxValue).padEnd(12, ' ')
-            line += String(sensor.note)
-
-            result += line + "\n"
+            var currentVal = ""
+            
+            // 获取当前值
+            if (modbusServer && modbusServer.dataStore) {
+                if (sensor.pointType === "线圈") {
+                    currentVal = modbusServer.dataStore.readCoil(sensor.index) ? "1" : "0"
+                } else if (sensor.pointType === "离散输入") {
+                    currentVal = modbusServer.dataStore.readDiscreteInput(sensor.index) ? "1" : "0"
+                } else if (sensor.pointType === "保持寄存器") {
+                    currentVal = String(modbusServer.dataStore.readHoldingRegister(sensor.index))
+                } else if (sensor.pointType === "输入寄存器") {
+                    currentVal = String(modbusServer.dataStore.readInputRegister(sensor.index))
+                }
+            }
+            
+            sensorListModel.append({
+                "address": sensor.index,
+                "pointName": sensor.pointName ,
+                "pointType": sensor.pointType ,
+                "initialValue": sensor.initialValue ,
+                "currentValue": currentVal,
+                "note": sensor.note,
+                "unit": sensor.unit,
+                "minValue": sensor.minValue,
+                "maxValue": sensor.maxValue,
+                "readOnly": sensor.readOnly
+            })
         }
+        console.log("===== displaySensorList 完成，添加了", sensorListModel.count, "条记录 =====")
+    }
 
-        sensorListDisplay.text = result
+    // 更新线圈值
+    function updateCoilValue(address, value) {
+        console.log("收到线圈变化信号 - 地址:", address, "值:", value)
+        updateSensorValue(address, "线圈", value ? "1" : "0")
+    }
+
+    // 更新离散输入值
+    function updateDiscreteInputValue(address, value) {
+        console.log("收到离散输入变化信号 - 地址:", address, "值:", value)
+        updateSensorValue(address, "离散输入", value ? "1" : "0")
+    }
+
+    // 更新保持寄存器值
+    function updateHoldingRegisterValue(address, value) {
+        console.log("收到保持寄存器变化信号 - 地址:", address, "值:", value)
+        updateSensorValue(address, "保持寄存器", String(value))
+    }
+
+    // 更新输入寄存器值
+    function updateInputRegisterValue(address, value) {
+        console.log("收到输入寄存器变化信号 - 地址:", address, "值:", value)
+        updateSensorValue(address, "输入寄存器", String(value))
+    }
+
+    // 通用更新函数
+    function updateSensorValue(address, pointType, value) {
+        console.log("开始更新传感器值 - 地址:", address, "类型:", pointType, "值:", value)
+        var found = false
+        for (var i = 0; i < sensorListModel.count; i++) {
+            var item = sensorListModel.get(i)
+            if (item.address === address && item.pointType === pointType) {
+                console.log("找到匹配项，索引:", i, "更新前值:", item.currentValue)
+                sensorListModel.setProperty(i, "currentValue", value)
+                console.log("更新后值:", sensorListModel.get(i).currentValue)
+                found = true
+                break
+            }
+        }
+        if (!found) {
+            console.log("警告：未找到匹配的传感器 - 地址:", address, "类型:", pointType)
+        }
     }
 
     // 应用传感器配置到服务器
@@ -895,6 +1118,16 @@ ApplicationWindow {
             modbusServer.errorOccurred.connect(function(error) {
                 addLog("错误: " + error)
             })
+
+            // 连接数据变化信号
+            if (modbusServer.dataStore) {
+                console.log("连接数据变化信号...")
+                modbusServer.dataStore.coilChanged.connect(updateCoilValue)
+                modbusServer.dataStore.discreteInputChanged.connect(updateDiscreteInputValue)
+                modbusServer.dataStore.holdingRegisterChanged.connect(updateHoldingRegisterValue)
+                modbusServer.dataStore.inputRegisterChanged.connect(updateInputRegisterValue)
+                addLog("数据变化信号已连接")
+            }
         } else {
             addLog("警告: 无法获取 ModbusServer 对象")
         }
