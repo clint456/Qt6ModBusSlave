@@ -1119,6 +1119,15 @@ ApplicationWindow {
                 addLog("错误: " + error)
             })
 
+            // 连接报文收发信号
+            modbusServer.packetReceived.connect(function(packet) {
+                addLog(packet)
+            })
+
+            modbusServer.packetSent.connect(function(packet) {
+                addLog(packet)
+            })
+
             // 连接数据变化信号
             if (modbusServer.dataStore) {
                 console.log("连接数据变化信号...")

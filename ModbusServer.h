@@ -58,7 +58,7 @@ public:
     Q_INVOKABLE QString queryAddressFile(int startAddress, int count = 50);
 
     // 获取器
-    bool isRunning() const { return m_running; } // const表示该方法不会修改类的成员变量
+    bool isRunning() const { return m_running; } // const表示该方法不会修改对象的成员变量
     ModbusMode mode() const { return m_mode; }
     QString statusMessage() const { return m_statusMessage; }
     int requestCount() const { return m_requestCount; }
@@ -75,6 +75,8 @@ signals:
     void lastFunctionCodeChanged(int functionCode);
     void requestReceived(quint8 functionCode);
     void errorOccurred(const QString &error);
+    void packetReceived(const QString &packet);
+    void packetSent(const QString &packet);
 
 private slots:
     void onNewTcpConnection();
@@ -89,6 +91,7 @@ private:
     QByteArray routeFunctionCode(quint8 functionCode, const QByteArray &pdu);
     quint16 calculateCRC(const QByteArray &data);
     int getExpectedFrameLength(quint8 functionCode, const QByteArray &buffer);
+    QString formatPacket(const QByteArray &data, const QString &prefix);
     void setStatusMessage(const QString &message);
     void incrementRequestCount();
 

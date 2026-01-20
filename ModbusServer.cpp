@@ -20,7 +20,7 @@ ModbusServer::ModbusServer(QObject *parent)
     , m_lastFunctionCode(0)
 {
     // 创建数据存储
-    m_dataStore = new ModbusDataStore(this);
+    m_dataStore = new ModbusDataStore(this); // 加上this可用进行自动管理子对象生命周期
     m_functionHandler = new ModbusFunctionHandler(m_dataStore, this);
     m_fileStore = new FileStore(this);
     m_addressStore = new FileAddressStore(this);
@@ -47,7 +47,7 @@ bool ModbusServer::startTcp(quint16 port)
     }
 
     m_tcpServer = new QTcpServer(this);
-    connect(m_tcpServer, &QTcpServer::newConnection, this, &ModbusServer::onNewTcpConnection);
+    connect(m_tcpServer, &QTcpServer::newConnection, this, &ModbusServer::onNewTcpConnection); // 参数依次为：发布对象，信号，接受对象，槽函数
 
     if (!m_tcpServer->listen(QHostAddress::Any, port)) {
         setStatusMessage(QString("TCP 启动失败: %1").arg(m_tcpServer->errorString()));
@@ -161,8 +161,13 @@ QByteArray ModbusServer::processTcpRequest(const QByteArray &adu)
     QByteArray pdu = adu.mid(7);
     quint8 functionCode = static_cast<quint8>(pdu[0]);
 
-    qDebug() << "TCP 请求 - 功能码:" << functionCode << "(0x" + QString::number(functionCode, 16).toUpper() + ")" 
-             << "PDU 长度:" << pdu.size() << "字节";
+    // 发送接收报文信号到UI
+    QString recvPacket = QString("TCP 请求 - FC %1 (0x%2) PDU:%3字节")
+        .arg(functionCode)
+        .arg(functionCode, 2, 16, QChar('0')).toUpper()
+        .arg(pdu.size());
+    emit packetReceived(formatPacket(adu, "← 接收"));
+    qDebug() << recvPacket;
 
     // 更新最后接收到的功能码
     if (m_lastFunctionCode != functionCode) {
@@ -187,6 +192,7 @@ QByteArray ModbusServer::processTcpRequest(const QByteArray &adu)
     responseAdu.append(static_cast<char>(unitId));
     responseAdu.append(responsePdu);
 
+    emit packetSent(formatPacket(responseAdu, "→ 发送"));
     return responseAdu;
 }
 
@@ -304,6 +310,8 @@ void ModbusServer::onRtuError(QSerialPort::SerialPortError error)
 
 QByteArray ModbusServer::processRtuRequest(const QByteArray &adu)
 {
+    emit packetReceived(formatPacket(adu, "← RTU接收"));
+    
     // 验证帧长度（最小4字节：从站地址 + 功能码 + CRC）
     if (adu.size() < 4) {
         qWarning() << "RTU请求长度不足:" << adu.size() << "字节";
@@ -340,6 +348,7 @@ QByteArray ModbusServer::processRtuRequest(const QByteArray &adu)
     quint16 crcLe = qToLittleEndian(crc);
     responseAdu.append(reinterpret_cast<const char*>(&crcLe), 2);
 
+    emit packetSent(formatPacket(responseAdu, "→ RTU发送"));
     return responseAdu;
 }
 
@@ -648,6 +657,15 @@ int ModbusServer::getExpectedFrameLength(quint8 functionCode, const QByteArray &
 }
 
 // ========== 辅助方法 ==========
+
+QString ModbusServer::formatPacket(const QByteArray &data, const QString &prefix)
+{
+    QString result = prefix + " [" + QString::number(data.size()) + " 字节]: ";
+    for (int i = 0; i < data.size(); ++i) {
+        result += QString("%1 ").arg((unsigned char)data[i], 2, 16, QChar('0')).toUpper();
+    }
+    return result;
+}
 
 void ModbusServer::setStatusMessage(const QString &message)
 {

@@ -17,9 +17,9 @@ public:
 
     // 线圈操作
     Q_INVOKABLE bool readCoil(quint16 address) const;
-    bool readCoils(quint16 startAddress, quint16 count, QBitArray &values) const;
+    bool readCoils(quint16 startAddress, quint16 count, QBitArray &values) const; // 这里的const表示readCoils方法不会修改对象的成员变量
     bool writeCoil(quint16 address, bool value);
-    bool writeCoils(quint16 startAddress, const QBitArray &values);
+    bool writeCoils(quint16 startAddress, const QBitArray &values); // 这里的const表示避免在参数传递时复制大对象，提高性能
 
     // 离散输入操作
     Q_INVOKABLE bool readDiscreteInput(quint16 address) const;

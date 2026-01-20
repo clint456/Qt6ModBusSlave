@@ -3,8 +3,8 @@
 
 #include <QtGlobal>
 
-// Modbus 功能码
-enum ModbusFunctionCode : quint8 {
+// Modbus 功能码 
+enum ModbusFunctionCode : quint8 { // 强枚举类型，类型安全，确保底层类型只能为quint8
     ReadCoils = 0x01,               // 读线圈
     ReadDiscreteInputs = 0x02,      // 读离散输入
     ReadHoldingRegisters = 0x03,    // 读保持寄存器
@@ -44,9 +44,9 @@ enum ModbusDataType {
     DataTypeInputRegister   // 输入寄存器
 };
 
-// 常量定义
-namespace ModbusConst {
-    constexpr quint16 MAX_COILS = 65535;
+// 寄存器数量限制常量定义
+namespace ModbusConst { 
+    constexpr quint16 MAX_COILS = 65535; // 编译期常量，在编译器计算，不占运行时内存开销，可用于模板参数、数组大小等编译器需要的常量
     constexpr quint16 MAX_REGISTERS = 65535;
     constexpr quint16 MAX_READ_COILS = 2000;
     constexpr quint16 MAX_READ_REGISTERS = 125;
