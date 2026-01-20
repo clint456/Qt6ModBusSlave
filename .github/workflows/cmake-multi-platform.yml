@@ -1,0 +1,114 @@
+name: CMake on multiple platforms
+
+on:
+  push: 
+    branches: [ "master" ]
+  pull_request: 
+    branches: [ "master" ]
+
+jobs:
+  build: 
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+
+      matrix:
+        include: 
+          # Windows - Qt 6.8.x 使用新的架构命名
+          - os: windows-latest
+            c_compiler: cl
+            cpp_compiler: cl
+            qt_version: '6.8.0'  # 使用 6.8.0 而不是 6.8.3
+            qt_arch: win64_msvc2022_64  # 注意：改为 msvc2022
+            build_type: Release
+
+          # Linux GCC
+          - os: ubuntu-latest
+            c_compiler: gcc
+            cpp_compiler: g++
+            qt_version: '6.8.0'
+            qt_arch: linux_gcc_64  # 注意：改为 linux_gcc_64
+            build_type: Release
+
+          # Linux Clang
+          - os:  ubuntu-latest
+            c_compiler: clang
+            cpp_compiler: clang++
+            qt_version: '6.8.0'
+            qt_arch: linux_gcc_64
+            build_type:  Release
+
+    steps:
+    - uses: actions/checkout@v4
+
+    # 调试步骤：查看可用的架构
+    - name: Query available Qt architectures
+      shell: bash
+      run: |
+        python3 -m pip install aqtinstall
+        echo "=== Available architectures for Qt ${{ matrix.qt_version }} ==="
+        python3 -m aqt list-qt ${{ runner.os == 'Windows' && 'windows' || 'linux' }} desktop --arch ${{ matrix.qt_version }} || true
+        echo "=== Available modules ==="
+        python3 -m aqt list-qt ${{ runner.os == 'Windows' && 'windows' || 'linux' }} desktop --modules ${{ matrix.qt_version }} ${{ matrix.qt_arch }} || true
+
+    - name: Install Qt
+      uses:  jurplel/install-qt-action@v4.3.0
+      with:
+        version:  ${{ matrix.qt_version }}
+        target: 'desktop'
+        arch: ${{ matrix.qt_arch }}
+        modules: 'qtserialport'
+        cache:  true
+        setup-python: true
+        set-env: true
+
+    - name: Install Linux dependencies
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          libgl1-mesa-dev \
+          libglu1-mesa-dev \
+          libxkbcommon-x11-0 \
+          libxcb-icccm4 \
+          libxcb-image0 \
+          libxcb-keysyms1 \
+          libxcb-render-util0 \
+          libxcb-xinerama0 \
+          libxcb-cursor0
+
+    - name: Setup MSVC
+      if: runner.os == 'Windows'
+      uses: ilammy/msvc-dev-cmd@v1
+
+    - name: Configure CMake
+      shell: bash
+      run: |
+        cmake -B build \
+          -DCMAKE_CXX_COMPILER=${{ matrix. cpp_compiler }} \
+          -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} \
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+          -DCMAKE_PREFIX_PATH=${{ env.Qt6_DIR }}
+
+    - name: Build
+      run: cmake --build build --config ${{ matrix.build_type }} --parallel
+
+    - name: Test
+      working-directory: build
+      run: ctest --build-config ${{ matrix.build_type }} --output-on-failure
+      continue-on-error: true
+
+    - name: Upload artifacts (Windows)
+      if: runner.os == 'Windows'
+      uses: actions/upload-artifact@v4
+      with:
+        name: Qt6ModBusSlave-Windows
+        path: build/${{ matrix.build_type }}/appQt6ModBusSlave.exe
+
+    - name: Upload artifacts (Linux)
+      if: runner.os == 'Linux' && matrix.c_compiler == 'gcc'
+      uses: actions/upload-artifact@v4
+      with: 
+        name: Qt6ModBusSlave-Linux
+        path: build/appQt6ModBusSlave
