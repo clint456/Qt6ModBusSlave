@@ -47,10 +47,11 @@
 1. 下载[Desktop_Qt_6_10_1_MinGW_64_bit-Release.7z](https://github.com/clint456/Qt6ModBusSlave/releases/download/v0.1.0/Desktop_Qt_6_10_1_MinGW_64_bit-Release.7z)
 
 2. 解压，进入项目目录，找到**appQt6ModBusSlave.exe**，双击打开
+
+3. 界面介绍
+
 <img width="1200" height="856" alt="image" src="https://github.com/user-attachments/assets/be68ed51-3fb3-405e-84b2-c02ca350eb28" />
 
-3. 界面介绍 
-<img width="1920" height="1017" alt="image" src="https://github.com/user-attachments/assets/27d62982-e685-4812-be9d-f1a1ca74fa89" />
 - **服务器控制**，可选择启动Modbus Tcp或Rtu，一个应用程序目前只支持一个模式，你可以选择打开两个应用程序，一个跑Tcp一个跑Rtu。
 
 - **服务器状态**，主要用于显示状态，暂时只有运行状态、模式、请求计数、最后功能码、状态消息
