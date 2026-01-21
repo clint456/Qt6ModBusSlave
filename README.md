@@ -42,6 +42,28 @@
 | 203 | 自定义读文件 | 基于地址的文件读取 |
 | 204 | 自定义写文件 | 基于地址的文件写入 |
 
+## 快速使用
+
+1. 下载[Desktop_Qt_6_10_1_MinGW_64_bit-Release.7z](https://github.com/clint456/Qt6ModBusSlave/releases/download/v0.1.0/Desktop_Qt_6_10_1_MinGW_64_bit-Release.7z)
+
+2. 解压，进入项目目录，找到**appQt6ModBusSlave.exe**，双击打开
+<img width="1200" height="856" alt="image" src="https://github.com/user-attachments/assets/be68ed51-3fb3-405e-84b2-c02ca350eb28" />
+
+3. 界面介绍 
+
+- **服务器控制**，可选择启动Modbus Tcp或Rtu，一个应用程序目前只支持一个模式，你可以选择打开两个应用程序，一个跑Tcp一个跑Rtu。
+
+- **服务器状态**，主要用于显示状态，暂时只有运行状态、模式、请求计数、最后功能码、状态消息
+
+- **文件寄存器与传感器配置**，主要用于操作文件寄存器支持标准的20、21功能码，也支持通过保持寄存器来存文件即通过3/16功能码来存文件；传感器点表配置，目前支持CSV、txt导入、导出，Excel目前还没有测试，格式可用通过导出配置按钮查看，或者直接导入我给出的点表**testRegisterDotList.csv**进行测试，导入后需要先点击**应用到服务器**，然后再启动服务器，或者服务器在运行中时，先点击停止服务器，再开启，传感器配置也会刷新到服务器中，当外部客户端修改指定寄存器的值后，当前值会自动刷新。
+<img width="1920" height="1017" alt="image" src="https://github.com/user-attachments/assets/27d62982-e685-4812-be9d-f1a1ca74fa89" />
+
+<img width="836" height="304" alt="image" src="https://github.com/user-attachments/assets/183552d8-2ae1-41c4-b25c-8f9c9df7118c" />
+
+- **操作日志**，主要显示一些日志信息，默认会有触发的是什么功能码+发送/接受数据
+<img width="1165" height="293" alt="image" src="https://github.com/user-attachments/assets/eb51ce8c-762e-44d6-bebc-cc5c570ca473" />
+
+
 ## 编译和运行
 
 ### 系统要求
