@@ -18,7 +18,7 @@ public:
     // 线圈操作
     Q_INVOKABLE bool readCoil(quint16 address) const;
     bool readCoils(quint16 startAddress, quint16 count, QBitArray &values) const; // 这里的const表示readCoils方法不会修改对象的成员变量
-    bool writeCoil(quint16 address, bool value);
+    Q_INVOKABLE bool writeCoil(quint16 address, bool value);
     bool writeCoils(quint16 startAddress, const QBitArray &values); // 这里的const表示避免在参数传递时复制大对象，提高性能
 
     // 离散输入操作
@@ -29,7 +29,7 @@ public:
     // 保持寄存器操作
     Q_INVOKABLE quint16 readHoldingRegister(quint16 address) const;
     bool readHoldingRegisters(quint16 startAddress, quint16 count, QVector<quint16> &values) const;
-    bool writeHoldingRegister(quint16 address, quint16 value);
+    Q_INVOKABLE bool writeHoldingRegister(quint16 address, quint16 value);
     bool writeHoldingRegisters(quint16 startAddress, const QVector<quint16> &values);
 
     // 输入寄存器操作
@@ -50,6 +50,8 @@ signals:
     void coilChanged(quint16 address, bool value);
     void discreteInputChanged(quint16 address, bool value);
     void holdingRegisterChanged(quint16 address, quint16 value);
+    // 批量保持寄存器变更：起始地址与连续寄存器值列表（用于减少频繁单条通知）
+    void holdingRegistersChanged(quint16 startAddress, const QVector<quint16> &values);
     void inputRegisterChanged(quint16 address, quint16 value);
 
 private:

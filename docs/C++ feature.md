@@ -33,7 +33,7 @@ ModbusServer::ModbusServer(QObject *parent)
 - nullptr - C++11 的空指针常量，替代了老的NULL宏
 - parent-child关系 - new ModbusDataStore(this) 表示新对象的父对象是`this`，当父对象销毁时对象会自动销毁
 
-### 1.3 访问控制修饰符
+### 1.3 访问控制修饰符与Q_INVOKABLE
 
 ```cpp
 public:
@@ -281,7 +281,7 @@ QVector<quint16> m_values;
     - 零运行时开销（编译时展开）
     - 代码重用
 
-### 5.2 模板再Qt信号槽中的应用
+### 5.2 模板在Qt信号槽中的应用
 Qt从Qt5开始引入了基于函数指针和模板的新式信号槽语法，取代了旧的字符串形式（SIGNAL()/SLOT() 宏）。
 - 新式连接语法
 ```cpp

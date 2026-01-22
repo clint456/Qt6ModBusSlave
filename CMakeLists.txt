@@ -10,17 +10,27 @@ qt_standard_project_setup(REQUIRES 6.8)
 
 qt_add_executable(appQt6ModBusSlave
     main.cpp
+    # Modbus 核心模块
     ModbusTypes.h
     ModbusDataStore.h
     ModbusDataStore.cpp
     ModbusFunctionHandler.h
     ModbusFunctionHandler.cpp
-    FileStore.h
-    FileStore.cpp
     ModbusServer.h
     ModbusServer.cpp
+    # 数据转换模块
+    ModbusValueConverter.h
+    ModbusValueConverter.cpp
+    # 传感器配置模块
+    SensorItem.h
+    SensorItem.cpp
+    SensorConfigParser.h
+    SensorConfigParser.cpp
     SensorModel.h
     SensorModel.cpp
+    # 文件存储模块
+    FileStore.h
+    FileStore.cpp
 )
 
 qt_add_qml_module(appQt6ModBusSlave

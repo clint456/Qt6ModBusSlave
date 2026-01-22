@@ -33,8 +33,10 @@ bool ModbusDataStore::readCoils(quint16 startAddress, quint16 count, QBitArray &
 
 bool ModbusDataStore::writeCoil(quint16 address, bool value)
 {
-    QWriteLocker locker(&m_coilsLock);
-    m_coils[address] = value;
+    {
+        QWriteLocker locker(&m_coilsLock);
+        m_coils[address] = value;
+    }
     qDebug() << "[DataStore] 写入线圈 - 地址:" << address << "值:" << value << "准备发送信号";
     emit coilChanged(address, value);
     qDebug() << "[DataStore] 线圈变化信号已发送";
@@ -47,12 +49,19 @@ bool ModbusDataStore::writeCoils(quint16 startAddress, const QBitArray &values)
         return false;
     }
 
-    QWriteLocker locker(&m_coilsLock);
-    for (int i = 0; i < values.size(); ++i) {
-        quint16 address = startAddress + i;
-        m_coils[address] = values.testBit(i);
-        qDebug() << "[DataStore] 批量写入线圈 - 地址:" << address << "值:" << values.testBit(i);
-        emit coilChanged(address, values.testBit(i));
+    QVector<QPair<quint16,bool>> changes;
+    {
+        QWriteLocker locker(&m_coilsLock);
+        for (int i = 0; i < values.size(); ++i) {
+            quint16 address = startAddress + i;
+            m_coils[address] = values.testBit(i);
+            changes.append(qMakePair(address, values.testBit(i)));
+            qDebug() << "[DataStore] 批量写入线圈 - 地址:" << address << "值:" << values.testBit(i);
+        }
+    }
+
+    for (const auto &p : changes) {
+        emit coilChanged(p.first, p.second);
     }
 
     return true;
@@ -85,9 +94,11 @@ bool ModbusDataStore::readDiscreteInputs(quint16 startAddress, quint16 count, QB
 
 bool ModbusDataStore::writeDiscreteInput(quint16 address, bool value)
 {
-    QWriteLocker locker(&m_discreteInputsLock);
+    {
+        QWriteLocker locker(&m_discreteInputsLock);
+        m_discreteInputs[address] = value;
+    }
     qDebug() << "[DataStore] 写入离散输入 - 地址:" << address << "值:" << value;
-    m_discreteInputs[address] = value;
     emit discreteInputChanged(address, value);
     return true;
 }
@@ -120,8 +131,10 @@ bool ModbusDataStore::readHoldingRegisters(quint16 startAddress, quint16 count, 
 
 bool ModbusDataStore::writeHoldingRegister(quint16 address, quint16 value)
 {
-    QWriteLocker locker(&m_holdingRegistersLock);
-    m_holdingRegisters[address] = value;
+    {
+        QWriteLocker locker(&m_holdingRegistersLock);
+        m_holdingRegisters[address] = value;
+    }
     qDebug() << "[DataStore] 写入保持寄存器 - 地址:" << address << "值:" << value << "准备发送信号";
     emit holdingRegisterChanged(address, value);
     qDebug() << "[DataStore] 保持寄存器变化信号已发送";
@@ -134,13 +147,20 @@ bool ModbusDataStore::writeHoldingRegisters(quint16 startAddress, const QVector<
         return false;
     }
 
-    QWriteLocker locker(&m_holdingRegistersLock);
-    for (int i = 0; i < values.size(); ++i) {
-        quint16 address = startAddress + i;
-        m_holdingRegisters[address] = values[i];
-        qDebug() << "[DataStore] 批量写入保持寄存器 - 地址:" << address << "值:" << values[i];
-        emit holdingRegisterChanged(address, values[i]);
+    QVector<quint16> writtenValues;
+    writtenValues.reserve(values.size());
+    {
+        QWriteLocker locker(&m_holdingRegistersLock);
+        for (int i = 0; i < values.size(); ++i) {
+            quint16 address = startAddress + i;
+            m_holdingRegisters[address] = values[i];
+            writtenValues.append(values[i]);
+            qDebug() << "[DataStore] 批量写入保持寄存器 - 地址:" << address << "值:" << values[i];
+        }
     }
+
+    qDebug() << "[DataStore] 批量写入保持寄存器 完成 - 起始:" << startAddress << "个数:" << writtenValues.size();
+    emit holdingRegistersChanged(startAddress, writtenValues);
 
     return true;
 }
@@ -172,10 +192,12 @@ bool ModbusDataStore::readInputRegisters(quint16 startAddress, quint16 count, QV
 }
 
 bool ModbusDataStore::writeInputRegister(quint16 address, quint16 value)
-{qDebug() << "[DataStore] 写入输入寄存器 - 地址:" << address << "值:" << value;
-    
-    QWriteLocker locker(&m_inputRegistersLock);
-    m_inputRegisters[address] = value;
+{
+    qDebug() << "[DataStore] 写入输入寄存器 - 地址:" << address << "值:" << value;
+    {
+        QWriteLocker locker(&m_inputRegistersLock);
+        m_inputRegisters[address] = value;
+    }
     emit inputRegisterChanged(address, value);
     return true;
 }

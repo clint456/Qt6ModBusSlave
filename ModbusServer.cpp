@@ -147,7 +147,8 @@ QByteArray ModbusServer::processTcpRequest(const QByteArray &adu)
     }
 
     // 提取 MBAP 头
-    quint16 transactionId = qFromBigEndian<quint16>(reinterpret_cast<const uchar*>(adu.data()));
+    // 将constchar*转换为const uchar*以符合qFromBigEndian的参数要求
+    quint16 transactionId = qFromBigEndian<quint16>(reinterpret_cast<const uchar*>(adu.data())); 
     quint16 protocolId = qFromBigEndian<quint16>(reinterpret_cast<const uchar*>(adu.data() + 2));
     quint16 length = qFromBigEndian<quint16>(reinterpret_cast<const uchar*>(adu.data() + 4));
     quint8 unitId = static_cast<quint8>(adu[6]);
@@ -157,7 +158,18 @@ QByteArray ModbusServer::processTcpRequest(const QByteArray &adu)
         return QByteArray();
     }
 
-    // 提取 PDU
+    // 提取 PDU,截取前7字节后的数据
+    /* 例如00 01 00 00 00 06 02 03 00 12 00 04的前7个字节: 
+    | 字节 | 含义 | 值（十六进制） | 说明 |
+    |------|------|----------------|------|
+    | 0–1  | Transaction ID | `0x0001` | 请求 ID = 1 |
+    | 2–3  | Protocol ID    | `0x0000` | Modbus/TCP 标准 |
+    | 4–5  | Length         | `0x0006` | 后续有 6 字节（Unit ID + PDU） |
+    | 6    | Unit ID        | `0x02`   | 目标从站地址 = 2 |
+    | 7    | Function Code  | `0x03`   | 读保持寄存器（Read Holding Registers） |
+    | 8–9  | Starting Address | `0x0012` | 起始寄存器地址 = 0x12 = 18（十进制） |
+    | 10–11| Quantity       | `0x0004` | 读取数量 = 4 个寄存器（8 字节数据） |    
+    */
     QByteArray pdu = adu.mid(7);
     quint8 functionCode = static_cast<quint8>(pdu[0]);
 
