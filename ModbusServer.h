@@ -1,7 +1,7 @@
 /**
  * @file ModbusServer.h
  * @brief Modbus服务器头文件
- * 
+ *
  * 提供Modbus TCP和RTU服务器功能，支持标准功能码和文件记录操作
  */
 
@@ -32,7 +32,7 @@ class ModbusServer : public QObject
     Q_PROPERTY(QString statusMessage READ statusMessage NOTIFY statusMessageChanged)
     Q_PROPERTY(int requestCount READ requestCount NOTIFY requestCountChanged)
     Q_PROPERTY(int lastFunctionCode READ lastFunctionCode NOTIFY lastFunctionCodeChanged)
-    Q_PROPERTY(ModbusDataStore* dataStore READ dataStore CONSTANT)
+    Q_PROPERTY(ModbusDataStore *dataStore READ dataStore CONSTANT)
 
 public:
     explicit ModbusServer(QObject *parent = nullptr);
@@ -50,12 +50,24 @@ public:
     Q_INVOKABLE void stop();
 
     // 数据初始化
-    Q_INVOKABLE void initializeData(); 
-    
+    Q_INVOKABLE void initializeData();
+
     // 文件查询
     Q_INVOKABLE QStringList getFileList() const;
+    Q_INVOKABLE bool importFileFromLocal(int fileNumber, const QString &path);
+    Q_INVOKABLE bool exportFileToLocal(int fileNumber, const QString &path);
+    Q_INVOKABLE bool importHoldingRegistersFromLocal(int startAddress, int maxCount, const QString &path);
+    Q_INVOKABLE bool exportHoldingRegistersToLocal(int startAddress, int count, const QString &path);
     Q_INVOKABLE QString queryFileContent(int fileNumber, int maxRecords = 100);
     Q_INVOKABLE QString queryAddressFile(int startAddress, int count = 50);
+
+    // 内存使用统计
+    Q_INVOKABLE size_t getTotalMemoryItems() const;
+    Q_INVOKABLE QString getMemoryUsageReport() const;
+
+    // 内存清理
+    Q_INVOKABLE void clearAllData();
+    Q_INVOKABLE void clearFileRecords();
 
     // 获取器
     bool isRunning() const { return m_running; } // const表示该方法不会修改对象的成员变量
@@ -65,7 +77,7 @@ public:
     int lastFunctionCode() const { return m_lastFunctionCode; }
 
     // 获取数据存储对象（用于UI更新）
-    ModbusDataStore* dataStore() const { return m_dataStore; }
+    ModbusDataStore *dataStore() const { return m_dataStore; }
 
 signals:
     void runningChanged(bool running);
@@ -77,6 +89,8 @@ signals:
     void errorOccurred(const QString &error);
     void packetReceived(const QString &packet);
     void packetSent(const QString &packet);
+    // 内存使用警告信号
+    void memoryWarning(size_t totalItems, const QString &report);
 
 private slots:
     void onNewTcpConnection();
@@ -97,8 +111,8 @@ private:
 
     // TCP
     QTcpServer *m_tcpServer;
-    QList<QTcpSocket*> m_tcpClients;
-    QMap<QTcpSocket*, QByteArray> m_tcpBuffers;
+    QList<QTcpSocket *> m_tcpClients;
+    QMap<QTcpSocket *, QByteArray> m_tcpBuffers;
 
     // RTU
     QSerialPort *m_serialPort;

@@ -4,6 +4,7 @@
 #include <QDebug>
 #include "ModbusServer.h"
 #include "SensorModel.h"
+#include "DatabaseManager.h"
 
 int main(int argc, char *argv[])
 {
@@ -11,9 +12,34 @@ int main(int argc, char *argv[])
  
     qDebug() << "应用程序启动...";
 
+    // 初始化数据库连接
+    qDebug() << "正在连接 PostgreSQL 数据库...";
+    DatabaseManager& dbManager = DatabaseManager::instance();
+    bool dbConnected = dbManager.connectPostgreSQL(
+        "localhost",    // 主机
+        5555,           // 端口
+        "postgres",     // 数据库名
+        "postgres",     // 用户名
+        "158023"        // 密码
+    );
+    
+    if (dbConnected) {
+        qDebug() << "PostgreSQL 数据库连接成功！";
+    } else {
+        qWarning() << "PostgreSQL 数据库连接失败：" << dbManager.lastError();
+        qWarning() << "将使用内存模式运行（数据不会持久化）";
+    }
+
     // 创建 Modbus 服务器
     ModbusServer modbusServer;
     qDebug() << "ModbusServer 已创建";
+
+    // 启用数据库模式（如果连接成功）
+    if (dbConnected) {
+        modbusServer.dataStore()->setDatabaseEnabled(true);
+        modbusServer.dataStore()->loadFromDatabase();
+        qDebug() << "数据库模式已启用";
+    }
 
     // 创建传感器模型管理器
     SensorModelManager sensorManager;

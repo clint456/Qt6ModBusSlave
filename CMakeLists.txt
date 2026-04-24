@@ -4,7 +4,7 @@ project(Qt6ModBusSlave VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick Network SerialPort)
+find_package(Qt6 REQUIRED COMPONENTS Quick Network SerialPort Sql)
 
 qt_standard_project_setup(REQUIRES 6.8)
 
@@ -31,6 +31,9 @@ qt_add_executable(appQt6ModBusSlave
     # 文件存储模块
     FileStore.h
     FileStore.cpp
+    # 数据库模块
+    DatabaseManager.h
+    DatabaseManager.cpp
 )
 
 qt_add_qml_module(appQt6ModBusSlave
@@ -51,7 +54,7 @@ set_target_properties(appQt6ModBusSlave PROPERTIES
 )
 
 target_link_libraries(appQt6ModBusSlave
-    PRIVATE Qt6::Quick Qt6::Network Qt6::SerialPort
+    PRIVATE Qt6::Quick Qt6::Network Qt6::SerialPort Qt6::Sql
 )
 
 include(GNUInstallDirs)

@@ -1,7 +1,7 @@
 /**
  * @file FileStore.h
  * @brief 文件记录存储头文件
- * 
+ *
  * 定义Modbus文件记录的数据结构和操作接口
  */
 
@@ -26,17 +26,18 @@ public:
     quint16 totalRecords() const { return m_totalRecords; }
     QString description() const { return m_description; }
     void setDescription(const QString &desc) { m_description = desc; }
-    
-    QMap<quint16, QByteArray> getAllRecords() const { 
+
+    QMap<quint16, QByteArray> getAllRecords() const
+    {
         QReadLocker locker(&m_lock);
-        return m_records; 
+        return m_records;
     }
 
 private:
     quint16 m_fileNumber;
     quint16 m_totalRecords;
     QString m_description;
-    QMap<quint16, QByteArray> m_records;  // 记录号 -> 2字节数据
+    QMap<quint16, QByteArray> m_records; // 记录号 -> 2字节数据
     mutable QReadWriteLock m_lock;
 };
 
@@ -46,18 +47,29 @@ class FileStore : public QObject
     Q_OBJECT
 
 public:
+    // 文件数量上限（防止内存无限增长）
+    static constexpr quint16 MAX_FILES = 100;
+
     explicit FileStore(QObject *parent = nullptr);
     ~FileStore();
 
     bool createFile(quint16 fileNumber, const QString &description, quint16 totalRecords = 10000);
     QByteArray handleReadFileRecord(const QByteArray &request);
     QByteArray handleWriteFileRecord(const QByteArray &request);
-    
+
     // 查询功能
     QStringList getFileList() const;
     QString getFileInfo(quint16 fileNumber) const;
     QMap<quint16, quint16> getAllRecords(quint16 fileNumber, quint16 maxRecords = 100) const;
     QMap<quint16, QByteArray> getAllRecordsRaw(quint16 fileNumber, quint16 maxRecords = 100) const;
+
+    // 内存使用统计
+    size_t getFileCount() const;
+    size_t getTotalRecordCount() const;
+
+    // 内存清理
+    void clearAllFiles();
+    void clearFileRecords(quint16 fileNumber);
 
 signals:
     void fileRead(quint16 fileNumber, quint16 recordNumber, quint16 length);
@@ -66,7 +78,7 @@ signals:
 private:
     QByteArray buildErrorResponse(quint8 errorCode, quint8 exceptionCode) const;
 
-    QMap<quint16, FileRecord*> m_files;
+    QMap<quint16, FileRecord *> m_files;
     mutable QReadWriteLock m_lock;
 };
 
@@ -76,14 +88,20 @@ class FileAddressStore : public QObject
     Q_OBJECT
 
 public:
+    // 地址空间上限常量（防止内存无限增长）
+    static constexpr quint16 MAX_ADDRESS = 10000;
+
     explicit FileAddressStore(QObject *parent = nullptr);
 
     void initializeRegion(quint16 startAddress, quint16 count);
     QByteArray handleReadFile(const QByteArray &request);
     QByteArray handleWriteFile(const QByteArray &request);
-    
+
     // 查询功能
     QMap<quint16, QByteArray> getAddressData(quint16 startAddress, quint16 count) const;
+
+    // 内存使用统计
+    size_t getItemCount() const;
 
 signals:
     void registerRead(quint16 address, quint16 count);
@@ -92,7 +110,7 @@ signals:
 private:
     QByteArray buildErrorResponse(quint8 errorCode, quint8 exceptionCode) const;
 
-    QMap<quint16, QByteArray> m_data;  // 地址 -> 2字节数据
+    QMap<quint16, QByteArray> m_data; // 地址 -> 2字节数据
     mutable QReadWriteLock m_lock;
 };
 
