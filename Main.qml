@@ -21,8 +21,135 @@ ApplicationWindow {
     property color accentColor: "#0E7490"
     property color accentSoft: "#DDF2F6"
     property color bodyText: "#27374A"
+    property int tcpPort: 502
+    property string rtuPortName: "COM1"
+    property int rtuBaudRate: 9600
+    property var rtuBaudRates: [9600, 19200, 38400, 57600, 115200]
 
     font.family: "Microsoft YaHei UI"
+
+    menuBar: MenuBar {
+        Menu {
+            title: "文件"
+
+            Action {
+                text: "导入传感器配置..."
+                onTriggered: importFileDialog.open()
+            }
+
+            Action {
+                text: "导出传感器配置..."
+                enabled: sensorManager && sensorManager.sensorCount > 0
+                onTriggered: exportFileDialog.open()
+            }
+
+            MenuSeparator {}
+
+            Action {
+                text: "清空日志"
+                onTriggered: clearLog()
+            }
+
+            MenuSeparator {}
+
+            Action {
+                text: "退出"
+                onTriggered: Qt.quit()
+            }
+        }
+
+        Menu {
+            title: "服务器"
+
+            Menu {
+                title: "TCP 配置"
+
+                Action {
+                    text: "设置端口..."
+                    onTriggered: tcpConfigDialog.open()
+                }
+
+                Action {
+                    text: "启动 TCP (端口 " + root.tcpPort + ")"
+                    enabled: modbusServer && !modbusServer.running
+                    onTriggered: startTcpServer()
+                }
+            }
+
+            Menu {
+                title: "RTU 配置"
+
+                Action {
+                    text: "设置串口与波特率..."
+                    onTriggered: rtuConfigDialog.open()
+                }
+
+                Action {
+                    text: "启动 RTU (" + root.rtuPortName + " / " + root.rtuBaudRate + ")"
+                    enabled: modbusServer && !modbusServer.running
+                    onTriggered: startRtuServer()
+                }
+            }
+
+            MenuSeparator {}
+
+            Action {
+                text: "停止服务器"
+                enabled: modbusServer && modbusServer.running
+                onTriggered: stopServer()
+            }
+
+            Action {
+                text: "初始化数据"
+                enabled: modbusServer
+                onTriggered: initializeServerData()
+            }
+
+            MenuSeparator {}
+
+            Action {
+                text: "内存报告"
+                enabled: modbusServer
+                onTriggered: showMemoryReport()
+            }
+
+            Action {
+                text: "清理内存"
+                enabled: modbusServer
+                onTriggered: clearServerMemory()
+            }
+        }
+
+        Menu {
+            title: "视图"
+
+            Action {
+                text: "打开操作日志"
+                onTriggered: {
+                    logWindow.show();
+                    logWindow.raise();
+                    logWindow.requestActivate();
+                    logDisplay.forceActiveFocus();
+                    logDisplay.cursorPosition = logDisplay.length;
+                }
+            }
+
+            Action {
+                text: "刷新传感器列表"
+                enabled: sensorManager
+                onTriggered: displaySensorList()
+            }
+        }
+
+        Menu {
+            title: "帮助"
+
+            Action {
+                text: "关于"
+                onTriggered: aboutDialog.open()
+            }
+        }
+    }
 
     background: Rectangle {
         gradient: Gradient {
@@ -76,336 +203,6 @@ ApplicationWindow {
         ColumnLayout {
             width: pageScroll.availableWidth
             spacing: 14
-
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 72
-                radius: 14
-                border.width: 1
-                border.color: root.panelBorder
-                gradient: Gradient {
-                    GradientStop {
-                        position: 0.0
-                        color: "#FFFFFF"
-                    }
-                    GradientStop {
-                        position: 1.0
-                        color: "#F6FBFF"
-                    }
-                }
-
-                RowLayout {
-                    anchors.fill: parent
-                    anchors.margins: 14
-
-                    Rectangle {
-                        Layout.preferredWidth: 40
-                        Layout.preferredHeight: 40
-                        radius: 10
-                        color: root.accentSoft
-                        border.color: "#B9DFE8"
-                        border.width: 1
-
-                        Label {
-                            anchors.centerIn: parent
-                            text: "M"
-                            font.bold: true
-                            font.pixelSize: 20
-                            color: root.accentColor
-                        }
-                    }
-
-                    ColumnLayout {
-                        spacing: 0
-                        Label {
-                            text: "Modbus 从站模拟控制台"
-                            font.pixelSize: 18
-                            font.bold: true
-                            color: root.panelTitle
-                        }
-                        Label {
-                            text: "TCP / RTU 实时调试、文件寄存器与传感器配置一体化"
-                            font.pixelSize: 12
-                            color: "#5E7286"
-                        }
-                    }
-
-                    Item {
-                        Layout.fillWidth: true
-                    }
-
-                    Rectangle {
-                        Layout.preferredHeight: 30
-                        Layout.preferredWidth: Math.max(130, Math.min(220, runningBadgeLabel.implicitWidth + 30))
-                        radius: 15
-                        color: root.accentSoft
-                        border.width: 1
-                        border.color: "#B9DFE8"
-
-                        Label {
-                            id: runningBadgeLabel
-                            anchors.centerIn: parent
-                            text: modbusServer && modbusServer.running ? "服务运行中" : "服务未运行"
-                            color: root.accentColor
-                            font.pixelSize: 12
-                            font.bold: true
-                        }
-                    }
-                }
-            }
-
-            // 服务器控制区域
-            GroupBox {
-                id: serverControlBox
-                title: "服务器控制"
-                Layout.fillWidth: true
-                Layout.preferredHeight: root.width < 1220 ? 250 : 170
-                Layout.minimumHeight: root.width < 1220 ? 240 : 160
-                font.bold: false
-                padding: 12
-                topPadding: 30
-
-                label: Label {
-                    text: parent.title
-                    color: root.panelTitle
-                    font.pixelSize: 14
-                    font.bold: true
-                    leftPadding: 10
-                }
-
-                background: Rectangle {
-                    radius: 12
-                    color: root.panelBg
-                    border.color: root.panelBorder
-                    border.width: 1
-                }
-
-                GridLayout {
-                    id: serverControlGrid
-                    anchors.fill: parent
-                    columns: root.width >= 1380 ? 3 : 2
-                    rowSpacing: 12
-                    columnSpacing: 12
-                    // TCP 控制
-                    GroupBox {
-                        title: "TCP 模式"
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        padding: 10
-                        topPadding: 26
-
-                        label: Label {
-                            text: parent.title
-                            color: "#35506A"
-                            font.pixelSize: 13
-                            font.bold: true
-                            leftPadding: 8
-                        }
-
-                        background: Rectangle {
-                            radius: 10
-                            color: "#FAFDFF"
-                            border.color: "#DDE8F3"
-                            border.width: 1
-                        }
-
-                        GridLayout {
-                            id: tcpControlGrid
-                            anchors.fill: parent
-                            columns: width >= 320 ? 3 : 2
-                            rowSpacing: 8
-                            columnSpacing: 10
-
-                            Label {
-                                text: "端口:"
-                            }
-                            TextField {
-                                id: tcpPortField
-                                text: "502"
-                                placeholderText: "502"
-                                Layout.fillWidth: true
-                            }
-
-                            Button {
-                                id: startTcpButton
-                                text: "启动 TCP"
-                                Layout.fillWidth: true
-                                Layout.columnSpan: tcpControlGrid.columns === 2 ? 2 : 1
-                                onClicked: {
-                                    if (modbusServer) {
-                                        var port = parseInt(tcpPortField.text);
-                                        addLog("尝试启动 TCP 服务器，端口: " + port);
-                                        if (modbusServer.startTcp(port)) {
-                                            statusLabel.text = "TCP 服务器已启动";
-                                            addLog("TCP 服务器启动成功");
-                                        } else {
-                                            addLog("TCP 服务器启动失败");
-                                        }
-                                    } else {
-                                        addLog("错误: ModbusServer 对象未初始化");
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    // RTU 控制
-                    GroupBox {
-                        title: "RTU 模式"
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        padding: 10
-                        topPadding: 26
-
-                        label: Label {
-                            text: parent.title
-                            color: "#35506A"
-                            font.pixelSize: 13
-                            font.bold: true
-                            leftPadding: 8
-                        }
-
-                        background: Rectangle {
-                            radius: 10
-                            color: "#FAFDFF"
-                            border.color: "#DDE8F3"
-                            border.width: 1
-                        }
-
-                        GridLayout {
-                            id: rtuControlGrid
-                            anchors.fill: parent
-                            columns: width >= 430 ? 5 : (width >= 320 ? 3 : 2)
-                            rowSpacing: 8
-                            columnSpacing: 10
-
-                            Label {
-                                text: "串口:"
-                            }
-                            TextField {
-                                id: rtuPortField
-                                text: "COM1"
-                                placeholderText: "COM1"
-                                Layout.fillWidth: true
-                            }
-
-                            Label {
-                                text: "波特率:"
-                            }
-                            ComboBox {
-                                id: baudRateCombo
-                                model: ["9600", "19200", "38400", "57600", "115200"]
-                                currentIndex: 0
-                                Layout.fillWidth: true
-                            }
-
-                            Button {
-                                id: startRtuButton
-                                text: "启动 RTU"
-                                Layout.fillWidth: true
-                                Layout.columnSpan: rtuControlGrid.columns <= 3 ? rtuControlGrid.columns : 1
-                                enabled: modbusServer && !modbusServer.running
-                                onClicked: {
-                                    if (modbusServer) {
-                                        var baudRate = parseInt(baudRateCombo.currentText);
-                                        addLog("尝试启动 RTU 服务器，串口: " + rtuPortField.text + ", 波特率:  " + baudRate);
-                                        if (modbusServer.startRtu(rtuPortField.text, baudRate)) {
-                                            statusLabel.text = "RTU 服务器已启动";
-                                            addLog("RTU 服务器启动成功");
-                                        } else {
-                                            addLog("RTU 服务器启动失败");
-                                        }
-                                    } else {
-                                        addLog("错误: ModbusServer 对象未初始化");
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    // 通用控制
-                    GroupBox {
-                        title: "操作"
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        Layout.columnSpan: serverControlGrid.columns === 3 ? 1 : 2
-                        padding: 10
-                        topPadding: 26
-
-                        label: Label {
-                            text: parent.title
-                            color: "#35506A"
-                            font.pixelSize: 13
-                            font.bold: true
-                            leftPadding: 8
-                        }
-
-                        background: Rectangle {
-                            radius: 10
-                            color: "#FAFDFF"
-                            border.color: "#DDE8F3"
-                            border.width: 1
-                        }
-
-                        GridLayout {
-                            anchors.fill: parent
-                            columns: 2
-                            rowSpacing: 6
-                            columnSpacing: 8
-
-                            Button {
-                                text: "停止服务器"
-                                Layout.fillWidth: true
-                                enabled: modbusServer && modbusServer.running
-                                onClicked: {
-                                    if (modbusServer) {
-                                        modbusServer.stop();
-                                        statusLabel.text = "服务器已停止";
-                                    }
-                                }
-                            }
-
-                            Button {
-                                text: "初始化数据"
-                                Layout.fillWidth: true
-                                onClicked: {
-                                    if (modbusServer) {
-                                        modbusServer.initializeData();
-                                        statusLabel.text = "数据已初始化";
-                                    }
-                                }
-                            }
-
-                            Button {
-                                text: "内存报告"
-                                Layout.fillWidth: true
-                                ToolTip.visible: hovered
-                                ToolTip.text: "查看当前内存使用情况"
-                                onClicked: {
-                                    if (modbusServer) {
-                                        var report = modbusServer.getMemoryUsageReport();
-                                        addLog("\n" + report + "\n");
-                                    }
-                                }
-                            }
-
-                            Button {
-                                text: "清理内存"
-                                Layout.fillWidth: true
-                                ToolTip.visible: hovered
-                                ToolTip.text: "清空所有寄存器和文件数据（谨慎使用）"
-                                onClicked: {
-                                    if (modbusServer) {
-                                        modbusServer.clearAllData();
-                                        addLog("已清理所有数据");
-                                        displaySensorList();  // 刷新显示
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
 
             // 状态显示区域
             GroupBox {
@@ -574,8 +371,8 @@ ApplicationWindow {
 
                     StackLayout {
                         Layout.fillWidth: true
-                        Layout.fillHeight: false
-                        Layout.preferredHeight: dataTabBar.currentIndex === 0 ? fileTransferTabItem.implicitHeight : Math.max(420, root.height * 0.45)
+                        Layout.fillHeight: true
+                        Layout.preferredHeight: Math.max(380, root.height * 0.42)
                         currentIndex: dataTabBar.currentIndex
                         // Tab 1: 文件寄存器
                         Item {
@@ -628,7 +425,7 @@ ApplicationWindow {
 
                                             GridLayout {
                                                 Layout.fillWidth: true
-                                                Layout.fillHeight: true
+                                                Layout.fillHeight: false
                                                 columns: 2
                                                 rowSpacing: 6
                                                 columnSpacing: 8
@@ -792,14 +589,16 @@ ApplicationWindow {
 
                                 // Excel 导入导出控制
                                 Rectangle {
+                                    id: sensorToolbar
                                     Layout.fillWidth: true
-                                    Layout.preferredHeight: 40
+                                    Layout.preferredHeight: Math.max(48, sensorToolbarFlow.implicitHeight + 16)
                                     color: "#F5F9FD"
                                     radius: 5
                                     border.color: "#D6E3EF"
                                     border.width: 1
 
                                     Flow {
+                                        id: sensorToolbarFlow
                                         anchors.fill: parent
                                         anchors.margins: 8
                                         spacing: 8
@@ -1186,124 +985,109 @@ ApplicationWindow {
                     }
                 }
             }
+        }
+    }
 
-            // 日志区域
-            GroupBox {
-                title: "操作日志"
+    // 日志窗口
+    Window {
+        id: logWindow
+        width: 800
+        height: 500
+        title: "操作日志"
+        color: root.pageBgTop
+
+        onClosing: {
+            hide();
+        }
+
+        ColumnLayout {
+            anchors.fill: parent
+            anchors.margins: 10
+            spacing: 5
+
+            RowLayout {
                 Layout.fillWidth: true
-                Layout.preferredHeight: Math.max(220, Math.min(340, root.height * 0.30))
-                Layout.minimumHeight: 200
-                font.bold: false
-                padding: 10
-                topPadding: 30
+                spacing: 10
 
-                label: Label {
-                    text: parent.title
-                    color: root.panelTitle
-                    font.pixelSize: 14
-                    font.bold: true
-                    leftPadding: 10
+                CheckBox {
+                    id: packetLogCheckBox
+                    text: "记录收发包"
+                    checked: enablePacketLog
+                    font.pixelSize: 11
+                    onCheckedChanged: enablePacketLog = checked
+                    ToolTip.visible: hovered
+                    ToolTip.text: "启用后会记录每个Modbus请求/响应的详细报文（高频操作，建议关闭以节省内存）"
                 }
 
-                background: Rectangle {
-                    radius: 12
-                    color: root.panelBg
-                    border.color: root.panelBorder
-                    border.width: 1
+                CheckBox {
+                    id: requestLogCheckBox
+                    text: "记录请求"
+                    checked: enableRequestLog
+                    font.pixelSize: 11
+                    onCheckedChanged: enableRequestLog = checked
+                    ToolTip.visible: hovered
+                    ToolTip.text: "记录每个Modbus请求的功能码"
                 }
 
-                ColumnLayout {
-                    anchors.fill: parent
-                    spacing: 5
+                Label {
+                    text: "最大行数:"
+                    font.pixelSize: 11
+                }
+                SpinBox {
+                    id: maxLogLinesSpinBox
+                    from: 100
+                    to: 5000
+                    value: maxLogLines
+                    stepSize: 100
+                    editable: true
+                    Layout.preferredWidth: 100
+                    font.pixelSize: 11
+                    onValueChanged: maxLogLines = value
+                    ToolTip.visible: hovered
+                    ToolTip.text: "日志超过此行数时自动清理旧日志"
+                }
 
-                    RowLayout {
-                        Layout.fillWidth: true
-                        spacing: 10
+                Item {
+                    Layout.fillWidth: true
+                }
 
-                        CheckBox {
-                            id: packetLogCheckBox
-                            text: "记录收发包"
-                            checked: enablePacketLog
-                            font.pixelSize: 11
-                            onCheckedChanged: enablePacketLog = checked
-                            ToolTip.visible: hovered
-                            ToolTip.text: "启用后会记录每个Modbus请求/响应的详细报文（高频操作，建议关闭以节省内存）"
-                        }
+                Button {
+                    text: "清空日志"
+                    Layout.preferredWidth: 80
+                    Layout.preferredHeight: 25
+                    font.pixelSize: 11
+                    onClicked: clearLog()
+                }
+            }
 
-                        CheckBox {
-                            id: requestLogCheckBox
-                            text: "记录请求"
-                            checked: enableRequestLog
-                            font.pixelSize: 11
-                            onCheckedChanged: enableRequestLog = checked
-                            ToolTip.visible: hovered
-                            ToolTip.text: "记录每个Modbus请求的功能码"
-                        }
+            ScrollView {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                clip: true
 
-                        Label {
-                            text: "最大行数:"
-                            font.pixelSize: 11
-                        }
-                        SpinBox {
-                            id: maxLogLinesSpinBox
-                            from: 100
-                            to: 5000
-                            value: maxLogLines
-                            stepSize: 100
-                            editable: true
-                            Layout.preferredWidth: root.width < 980 ? 80 : 100
-                            font.pixelSize: 11
-                            onValueChanged: maxLogLines = value
-                            ToolTip.visible: hovered
-                            ToolTip.text: "日志超过此行数时自动清理旧日志"
-                        }
-
-                        Item {
-                            Layout.fillWidth: true
-                        }
-
-                        Button {
-                            text: "清空日志"
-                            Layout.preferredWidth: root.width < 980 ? 64 : 80
-                            Layout.preferredHeight: 25
-                            font.pixelSize: 11
-                            onClicked: {
-                                logDisplay.clear();
-                                logLineCount = 0;
+                TextArea {
+                    id: logDisplay
+                    readOnly: true
+                    wrapMode: TextEdit.Wrap
+                    font.family: "Consolas, Monaco, monospace"
+                    font.pixelSize: 11
+                    text: "服务器日志将显示在这里...\n"
+                    background: Rectangle {
+                        radius: 8
+                        gradient: Gradient {
+                            GradientStop {
+                                position: 0.0
+                                color: "#1C2A39"
+                            }
+                            GradientStop {
+                                position: 1.0
+                                color: "#15202C"
                             }
                         }
+                        border.color: "#32485D"
+                        border.width: 1
                     }
-
-                    ScrollView {
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        clip: true
-
-                        TextArea {
-                            id: logDisplay
-                            readOnly: true
-                            wrapMode: TextEdit.Wrap
-                            font.family: "Consolas, Monaco, monospace"
-                            font.pixelSize: 11
-                            text: "服务器日志将显示在这里...\n"
-                            background: Rectangle {
-                                radius: 8
-                                gradient: Gradient {
-                                    GradientStop {
-                                        position: 0.0
-                                        color: "#1C2A39"
-                                    }
-                                    GradientStop {
-                                        position: 1.0
-                                        color: "#15202C"
-                                    }
-                                }
-                                border.color: "#32485D"
-                                border.width: 1
-                            }
-                            color: "#ecf0f1"
-                        }
-                    }
+                    color: "#ecf0f1"
                 }
             }
         }
@@ -1348,6 +1132,107 @@ ApplicationWindow {
                 }
             } else {
                 addLog("错误: 传感器管理器未初始化");
+            }
+        }
+    }
+
+    Dialog {
+        id: aboutDialog
+        title: "关于"
+        modal: true
+        standardButtons: Dialog.Ok
+        width: 420
+
+        contentItem: Label {
+            text: "Qt6 Modbus Slave Simulator\n\n用于调试 Modbus TCP / RTU 从站、文件寄存器与传感器配置。\n\n新增菜单栏后，可直接从顶部访问导入导出、服务控制与日志操作。"
+            wrapMode: Text.WordWrap
+            color: "#334155"
+            padding: 14
+        }
+    }
+
+    Dialog {
+        id: tcpConfigDialog
+        title: "TCP 配置"
+        modal: true
+        standardButtons: Dialog.Ok | Dialog.Cancel
+        width: 380
+
+        onOpened: tcpPortFieldInDialog.text = root.tcpPort.toString()
+        onAccepted: {
+            var newPort = parseInt(tcpPortFieldInDialog.text);
+            if (isNaN(newPort) || newPort < 1 || newPort > 65535) {
+                addLog("TCP 端口无效，请输入 1-65535");
+                return;
+            }
+
+            root.tcpPort = newPort;
+            addLog("TCP 端口已更新为: " + root.tcpPort);
+        }
+
+        contentItem: ColumnLayout {
+            spacing: 10
+
+            Label {
+                text: "TCP 监听端口"
+                color: "#35506A"
+            }
+
+            TextField {
+                id: tcpPortFieldInDialog
+                Layout.fillWidth: true
+                placeholderText: "1 - 65535"
+                inputMethodHints: Qt.ImhDigitsOnly
+            }
+        }
+    }
+
+    Dialog {
+        id: rtuConfigDialog
+        title: "RTU 配置"
+        modal: true
+        standardButtons: Dialog.Ok | Dialog.Cancel
+        width: 420
+
+        onOpened: {
+            rtuPortFieldInDialog.text = root.rtuPortName;
+            var baudText = root.rtuBaudRate.toString();
+            var idx = baudRateComboInDialog.find(baudText);
+            if (idx >= 0)
+                baudRateComboInDialog.currentIndex = idx;
+        }
+        onAccepted: {
+            if (rtuPortFieldInDialog.text.trim().length === 0) {
+                addLog("RTU 串口名不能为空");
+                return;
+            }
+
+            root.rtuPortName = rtuPortFieldInDialog.text.trim();
+            root.rtuBaudRate = parseInt(baudRateComboInDialog.currentText);
+            addLog("RTU 配置已更新: " + root.rtuPortName + " / " + root.rtuBaudRate);
+        }
+
+        contentItem: GridLayout {
+            columns: 2
+            rowSpacing: 10
+            columnSpacing: 8
+
+            Label {
+                text: "串口"
+            }
+            TextField {
+                id: rtuPortFieldInDialog
+                Layout.fillWidth: true
+                placeholderText: "COM1"
+            }
+
+            Label {
+                text: "波特率"
+            }
+            ComboBox {
+                id: baudRateComboInDialog
+                Layout.fillWidth: true
+                model: root.rtuBaudRates
             }
         }
     }
@@ -1466,6 +1351,68 @@ ApplicationWindow {
         pendingHoldingStartAddress = fileAddressSpinBox.value;
         pendingHoldingCount = fileRegisterCountSpinBox.value;
         uploadHoldingDialog.open();
+    }
+
+    function startTcpServer() {
+        if (modbusServer) {
+            addLog("尝试启动 TCP 服务器，端口: " + root.tcpPort);
+            if (modbusServer.startTcp(root.tcpPort)) {
+                statusLabel.text = "TCP 服务器已启动";
+                addLog("TCP 服务器启动成功");
+            } else {
+                addLog("TCP 服务器启动失败");
+            }
+        } else {
+            addLog("错误: ModbusServer 对象未初始化");
+        }
+    }
+
+    function startRtuServer() {
+        if (modbusServer) {
+            addLog("尝试启动 RTU 服务器，串口: " + root.rtuPortName + ", 波特率: " + root.rtuBaudRate);
+            if (modbusServer.startRtu(root.rtuPortName, root.rtuBaudRate)) {
+                statusLabel.text = "RTU 服务器已启动";
+                addLog("RTU 服务器启动成功");
+            } else {
+                addLog("RTU 服务器启动失败");
+            }
+        } else {
+            addLog("错误: ModbusServer 对象未初始化");
+        }
+    }
+
+    function clearLog() {
+        logDisplay.clear();
+        logLineCount = 0;
+    }
+
+    function stopServer() {
+        if (modbusServer) {
+            modbusServer.stop();
+            statusLabel.text = "服务器已停止";
+        }
+    }
+
+    function initializeServerData() {
+        if (modbusServer) {
+            modbusServer.initializeData();
+            statusLabel.text = "数据已初始化";
+        }
+    }
+
+    function showMemoryReport() {
+        if (modbusServer) {
+            var report = modbusServer.getMemoryUsageReport();
+            addLog("\n" + report + "\n");
+        }
+    }
+
+    function clearServerMemory() {
+        if (modbusServer) {
+            modbusServer.clearAllData();
+            addLog("已清理所有数据");
+            displaySensorList();
+        }
     }
 
     function downloadHoldingRegisters() {
