@@ -7,8 +7,6 @@
 #include <QBitArray>
 #include "ModbusTypes.h"
 
-class DatabaseManager;
-
 // Modbus 数据存储类
 class ModbusDataStore : public QObject
 {
@@ -25,13 +23,6 @@ public:
     static constexpr size_t MEMORY_WARNING_THRESHOLD = 8000;
 
     explicit ModbusDataStore(QObject *parent = nullptr);
-
-    // 数据库模式控制
-    void setDatabaseEnabled(bool enabled);
-    bool isDatabaseEnabled() const { return m_databaseEnabled; }
-
-    // 从数据库加载数据到内存缓存
-    bool loadFromDatabase();
 
     // 线圈操作
     Q_INVOKABLE bool readCoil(quint16 address) const;
@@ -96,8 +87,6 @@ private:
     mutable QReadWriteLock m_holdingRegistersLock;
     mutable QReadWriteLock m_inputRegistersLock;
 
-    // 数据库模式标志
-    bool m_databaseEnabled;
 };
 
 #endif // MODBUSDATASTORE_H

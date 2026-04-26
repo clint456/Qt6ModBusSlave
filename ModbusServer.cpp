@@ -446,8 +446,8 @@ void ModbusServer::initializeData()
     m_dataStore->initializeInputRegisters(0, 100, 0);
 
     // 创建测试文件
-    m_fileStore->createFile(1, "温度数据文件", 256);
-    m_fileStore->createFile(2, "状态数据文件", 128);
+    // m_fileStore->createFile(1, "温度数据文件", 256);
+    // m_fileStore->createFile(2, "状态数据文件", 128);
 
     // 初始化地址存储
     m_addressStore->initializeRegion(1000, 200);

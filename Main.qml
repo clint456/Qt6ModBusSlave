@@ -9,18 +9,25 @@ ApplicationWindow {
     height: 800
     visible: true
     title: "Modbus TCP/RTU从站服务器"
-    minimumWidth: 860
-    minimumHeight: 560
-    color: "#F3F6FA"
+    minimumWidth: 1100
+    minimumHeight: 700
+    color: "#D8DADF"
 
-    property color pageBgTop: "#F6FAFF"
-    property color pageBgBottom: "#EAF1F8"
-    property color panelBg: "#FFFFFF"
-    property color panelBorder: "#D5E1EE"
-    property color panelTitle: "#1D334A"
-    property color accentColor: "#0E7490"
-    property color accentSoft: "#DDF2F6"
-    property color bodyText: "#27374A"
+    property color pageBgTop: "#D7DADF"
+    property color pageBgBottom: "#C4C9D0"
+    property color panelBg: "#E3E5E9"
+    property color panelBorder: "#A2A9B1"
+    property color panelTitle: "#1F1F1F"
+    property color accentColor: "#616872"
+    property color accentSoft: "#CDD2D9"
+    property color bodyText: "#262626"
+    property color mutedText: "#5A5A5A"
+    property color controlBg: "#E7EAEE"
+    property color controlBorder: "#919AA5"
+    property color controlHover: "#DCE1E7"
+    property color controlPressed: "#C7CED6"
+    property color controlText: "#1F252C"
+    property int sensorTableMinWidth: 1500
     property int tcpPort: 502
     property string rtuPortName: "COM1"
     property int rtuBaudRate: 9600
@@ -28,7 +35,197 @@ ApplicationWindow {
 
     font.family: "Microsoft YaHei UI"
 
+    palette.windowText: bodyText
+    palette.text: bodyText
+    palette.buttonText: bodyText
+    palette.base: "#E8EBEF"
+    palette.button: "#D0D5DC"
+    palette.highlight: "#B9C0C8"
+    palette.highlightedText: "#222222"
+
+    component IndustrialButton: Button {
+        implicitHeight: 34
+        font.pixelSize: 12
+        contentItem: Text {
+            text: parent.text
+            font: parent.font
+            color: root.controlText
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            elide: Text.ElideRight
+        }
+        background: Rectangle {
+            radius: 3
+            border.width: 1
+            border.color: root.controlBorder
+            color: !parent.enabled ? "#D0D5DC" : (parent.down ? root.controlPressed : (parent.hovered ? root.controlHover : root.controlBg))
+        }
+    }
+
+    component IndustrialSpinBox: SpinBox {
+        implicitHeight: 34
+        editable: true
+        font.pixelSize: 12
+        down.indicator: Rectangle {
+            x: 0
+            y: 0
+            width: 34
+            height: parent.height
+            radius: 3
+            border.width: 1
+            border.color: root.controlBorder
+            color: parent.down.pressed ? root.controlPressed : (parent.down.hovered ? root.controlHover : root.controlBg)
+
+            Text {
+                anchors.centerIn: parent
+                text: "-"
+                color: root.controlText
+                font.pixelSize: 18
+                font.bold: true
+            }
+        }
+        up.indicator: Rectangle {
+            x: parent.width - width
+            y: 0
+            width: 34
+            height: parent.height
+            radius: 3
+            border.width: 1
+            border.color: root.controlBorder
+            color: parent.up.pressed ? root.controlPressed : (parent.up.hovered ? root.controlHover : root.controlBg)
+
+            Text {
+                anchors.centerIn: parent
+                text: "+"
+                color: root.controlText
+                font.pixelSize: 18
+                font.bold: true
+            }
+        }
+        background: Rectangle {
+            radius: 3
+            border.width: 1
+            border.color: root.controlBorder
+            color: root.controlBg
+        }
+        contentItem: TextInput {
+            z: 2
+            text: parent.textFromValue(parent.value, parent.locale)
+            font: parent.font
+            color: root.controlText
+            horizontalAlignment: Qt.AlignHCenter
+            verticalAlignment: Qt.AlignVCenter
+            leftPadding: parent.down.indicator.width
+            rightPadding: parent.up.indicator.width
+            readOnly: !parent.editable
+            validator: parent.validator
+            inputMethodHints: Qt.ImhFormattedNumbersOnly
+        }
+    }
+
+    component IndustrialCheckBox: CheckBox {
+        font.pixelSize: 12
+        spacing: 8
+        indicator: Rectangle {
+            implicitWidth: 16
+            implicitHeight: 16
+            radius: 2
+            border.color: root.controlBorder
+            border.width: 1
+            color: parent.checked ? "#4B545F" : "#F4F6F8"
+
+            Text {
+                anchors.centerIn: parent
+                text: "✓"
+                visible: parent.parent.checked
+                color: "#F2F4F6"
+                font.pixelSize: 11
+                font.bold: true
+            }
+        }
+        contentItem: Text {
+            text: parent.text
+            font: parent.font
+            color: root.bodyText
+            verticalAlignment: Text.AlignVCenter
+            leftPadding: parent.indicator.width + parent.spacing
+        }
+    }
+
+    component IndustrialTextField: TextField {
+        implicitHeight: 34
+        font.pixelSize: 12
+        color: root.controlText
+        background: Rectangle {
+            radius: 3
+            border.width: 1
+            border.color: root.controlBorder
+            color: root.controlBg
+        }
+    }
+
+    component IndustrialComboBox: ComboBox {
+        implicitHeight: 34
+        font.pixelSize: 12
+        contentItem: Text {
+            text: parent.displayText
+            font: parent.font
+            color: root.controlText
+            verticalAlignment: Text.AlignVCenter
+            leftPadding: 10
+            rightPadding: 24
+            elide: Text.ElideRight
+        }
+        indicator: Rectangle {
+            x: parent.width - width - 8
+            y: (parent.height - height) / 2
+            width: 10
+            height: 10
+            color: "transparent"
+            border.color: "transparent"
+
+            Canvas {
+                anchors.fill: parent
+                onPaint: {
+                    var ctx = getContext("2d");
+                    ctx.reset();
+                    ctx.moveTo(1, 3);
+                    ctx.lineTo(width - 1, 3);
+                    ctx.lineTo(width / 2, height - 2);
+                    ctx.closePath();
+                    ctx.fillStyle = "#3D4650";
+                    ctx.fill();
+                }
+            }
+        }
+        background: Rectangle {
+            radius: 3
+            border.width: 1
+            border.color: root.controlBorder
+            color: root.controlBg
+        }
+    }
+
+    component IndustrialScrollBar: ScrollBar {
+        policy: ScrollBar.AsNeeded
+        contentItem: Rectangle {
+            implicitWidth: 8
+            implicitHeight: 8
+            radius: 4
+            color: parent.pressed ? "#7F8792" : "#969FAA"
+        }
+        background: Rectangle {
+            color: "#C9CED5"
+            radius: 4
+        }
+    }
+
     menuBar: MenuBar {
+        background: Rectangle {
+            color: "#BBC2CA"
+            border.color: "#99A1AB"
+            border.width: 1
+        }
         Menu {
             title: "文件"
 
@@ -162,28 +359,6 @@ ApplicationWindow {
                 color: root.pageBgBottom
             }
         }
-
-        Rectangle {
-            x: -140
-            y: -100
-            width: 420
-            height: 420
-            radius: 210
-            color: "#B7E4ED"
-            opacity: 0.16
-        }
-
-        Rectangle {
-            anchors.right: parent.right
-            anchors.top: parent.top
-            anchors.rightMargin: -110
-            anchors.topMargin: 30
-            width: 360
-            height: 360
-            radius: 180
-            color: "#C8DBF6"
-            opacity: 0.18
-        }
     }
 
     // modbusServer 和 sensorManager 通过 C++ setContextProperty 注入
@@ -224,7 +399,7 @@ ApplicationWindow {
                 }
 
                 background: Rectangle {
-                    radius: 12
+                    radius: 6
                     color: root.panelBg
                     border.color: root.panelBorder
                     border.width: 1
@@ -236,18 +411,20 @@ ApplicationWindow {
                     spacing: 8
                     Label {
                         text: "运行状态:"
+                        color: root.bodyText
                         font.bold: false
                     }
                     Label {
                         id: runningLabel
-                        text: modbusServer ? (modbusServer.running ? "● 运行中" : "○ 已停止") : "○ 未知"
-                        color: modbusServer && modbusServer.running ? "#27ae60" : "#e74c3c"
+                        text: modbusServer ? (modbusServer.running ? "运行中" : "已停止") : "未知"
+                        color: root.bodyText
                         font.pixelSize: 14
                         font.bold: false
                     }
 
                     Label {
                         text: "模式:"
+                        color: root.bodyText
                         font.bold: false
                     }
                     Label {
@@ -262,18 +439,20 @@ ApplicationWindow {
 
                     Label {
                         text: "请求计数:"
+                        color: root.bodyText
                         font.bold: false
                     }
                     Label {
                         id: requestCountLabel
                         text: modbusServer ? modbusServer.requestCount.toString() : "0"
-                        color: "#2980b9"
+                        color: root.bodyText
                         font.pixelSize: 14
                         font.bold: false
                     }
 
                     Label {
                         text: "最后功能码:"
+                        color: root.bodyText
                         font.bold: false
                     }
                     Label {
@@ -285,13 +464,14 @@ ApplicationWindow {
                             var fcName = getFunctionCodeName(fc);
                             return fc + " (0x" + fc.toString(16).toUpperCase() + ") - " + fcName;
                         }
-                        color: "#27ae60"
+                        color: root.bodyText
                         font.pixelSize: 13
                         font.bold: false
                     }
 
                     Label {
                         text: "状态消息:"
+                        color: root.bodyText
                         font.bold: false
                     }
                     Label {
@@ -300,7 +480,7 @@ ApplicationWindow {
                         width: Math.max(180, serverStatusBox.width * 0.35)
                         wrapMode: Text.WordWrap
                         font.pixelSize: 13
-                        color: "#34495e"
+                        color: root.bodyText
                     }
                 }
             }
@@ -309,7 +489,8 @@ ApplicationWindow {
             GroupBox {
                 title: "文件寄存器与传感器配置"
                 Layout.fillWidth: true
-                Layout.fillHeight: true
+                Layout.fillHeight: false
+                Layout.preferredHeight: contentLayout.implicitHeight + 44
                 Layout.minimumHeight: 300
                 font.bold: false
                 padding: 10
@@ -324,13 +505,14 @@ ApplicationWindow {
                 }
 
                 background: Rectangle {
-                    radius: 12
+                    radius: 6
                     color: root.panelBg
                     border.color: root.panelBorder
                     border.width: 1
                 }
 
                 ColumnLayout {
+                    id: contentLayout
                     anchors.fill: parent
                     // spacing: 8
 
@@ -339,9 +521,9 @@ ApplicationWindow {
                         Layout.fillWidth: true
                         spacing: 8
                         background: Rectangle {
-                            radius: 10
-                            color: "#F4F8FD"
-                            border.color: "#DCE7F3"
+                            radius: 4
+                            color: "#C4CAD2"
+                            border.color: "#9FA7B1"
                             border.width: 1
                         }
 
@@ -349,30 +531,44 @@ ApplicationWindow {
                             text: "文件寄存器"
                             font.pixelSize: 13
                             font.bold: checked
+                            contentItem: Text {
+                                text: parent.text
+                                font: parent.font
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                                color: parent.checked ? "#1F1F1F" : root.mutedText
+                            }
                             background: Rectangle {
-                                radius: 8
-                                color: parent.checked ? "#DDF2F6" : "transparent"
+                                radius: 3
+                                color: parent.checked ? "#AEB5BE" : "transparent"
                                 border.width: parent.checked ? 1 : 0
-                                border.color: "#9DD2DE"
+                                border.color: "#8F98A3"
                             }
                         }
                         TabButton {
                             text: "传感器配置"
                             font.pixelSize: 13
                             font.bold: checked
+                            contentItem: Text {
+                                text: parent.text
+                                font: parent.font
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                                color: parent.checked ? "#1F1F1F" : root.mutedText
+                            }
                             background: Rectangle {
-                                radius: 8
-                                color: parent.checked ? "#DDF2F6" : "transparent"
+                                radius: 3
+                                color: parent.checked ? "#AEB5BE" : "transparent"
                                 border.width: parent.checked ? 1 : 0
-                                border.color: "#9DD2DE"
+                                border.color: "#8F98A3"
                             }
                         }
                     }
 
                     StackLayout {
                         Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        Layout.preferredHeight: Math.max(380, root.height * 0.42)
+                        Layout.fillHeight: false
+                        Layout.preferredHeight: currentItem ? currentItem.implicitHeight : 0
                         currentIndex: dataTabBar.currentIndex
                         // Tab 1: 文件寄存器
                         Item {
@@ -389,7 +585,7 @@ ApplicationWindow {
                                     id: fileTransferGrid
                                     Layout.fillWidth: true
                                     Layout.fillHeight: false
-                                    columns: root.width >= 1380 ? 2 : 1
+                                    columns: root.width >= 1200 ? 2 : 1
                                     rowSpacing: 10
                                     columnSpacing: 10
 
@@ -398,23 +594,23 @@ ApplicationWindow {
                                         title: "标准文件记录 (FC 20/21)"
                                         Layout.fillWidth: true
                                         Layout.fillHeight: false
-                                        Layout.minimumHeight: 230
+                                        Layout.minimumHeight: 190
                                         font.bold: false
                                         padding: 10
                                         topPadding: 28
 
                                         label: Label {
                                             text: parent.title
-                                            color: "#35506A"
+                                            color: root.panelTitle
                                             font.pixelSize: 13
                                             font.bold: true
                                             leftPadding: 8
                                         }
 
                                         background: Rectangle {
-                                            radius: 10
-                                            color: "#FAFDFF"
-                                            border.color: "#DDE8F3"
+                                            radius: 4
+                                            color: "#D9DDE2"
+                                            border.color: "#AAB1BA"
                                             border.width: 1
                                         }
 
@@ -433,58 +629,56 @@ ApplicationWindow {
                                                 Label {
                                                     text: "文件号:"
                                                 }
-                                                SpinBox {
+                                                IndustrialSpinBox {
                                                     id: fileNumberSpinBox
                                                     from: 0
                                                     to: 65535
                                                     value: 1
-                                                    editable: true
                                                     Layout.fillWidth: true
                                                 }
 
                                                 Label {
                                                     text: "记录号:"
                                                 }
-                                                SpinBox {
+                                                IndustrialSpinBox {
                                                     id: recordNumberSpinBox
                                                     from: 0
                                                     to: 9999
                                                     value: 0
-                                                    editable: true
                                                     Layout.fillWidth: true
                                                 }
 
                                                 Label {
                                                     text: "记录数:"
                                                 }
-                                                SpinBox {
+                                                IndustrialSpinBox {
                                                     id: recordCountSpinBox
                                                     from: 1
                                                     to: 126
                                                     value: 10
-                                                    editable: true
                                                     Layout.fillWidth: true
                                                     ToolTip.visible: hovered
                                                     ToolTip.text: "Modbus标准限制：单次最多读取126个记录（252字节）"
                                                 }
                                             }
 
-                                            // 按钮区域（靠底）
-                                            ColumnLayout {
+                                            // 按钮区域（横排）
+                                            RowLayout {
                                                 Layout.fillWidth: true
                                                 Layout.alignment: Qt.AlignBottom
+                                                spacing: 8
 
-                                                Button {
+                                                IndustrialButton {
                                                     text: "查询文件内容"
                                                     Layout.fillWidth: true
                                                     onClicked: queryFileContent()
                                                 }
-                                                Button {
+                                                IndustrialButton {
                                                     text: "上传文件"
                                                     Layout.fillWidth: true
                                                     onClicked: uploadFile()
                                                 }
-                                                Button {
+                                                IndustrialButton {
                                                     text: "下载文件"
                                                     Layout.fillWidth: true
                                                     onClicked: downloadFile()
@@ -498,23 +692,23 @@ ApplicationWindow {
                                         title: "保持寄存器(文件传输) (FC 203/204)"
                                         Layout.fillWidth: true
                                         Layout.fillHeight: false
-                                        Layout.minimumHeight: 230
+                                        Layout.minimumHeight: 190
                                         font.bold: false
                                         padding: 10
                                         topPadding: 28
 
                                         label: Label {
                                             text: parent.title
-                                            color: "#35506A"
+                                            color: root.panelTitle
                                             font.pixelSize: 13
                                             font.bold: true
                                             leftPadding: 8
                                         }
 
                                         background: Rectangle {
-                                            radius: 10
-                                            color: "#FAFDFF"
-                                            border.color: "#DDE8F3"
+                                            radius: 4
+                                            color: "#D9DDE2"
+                                            border.color: "#AAB1BA"
                                             border.width: 1
                                         }
 
@@ -532,44 +726,43 @@ ApplicationWindow {
                                                 Label {
                                                     text: "起始地址:"
                                                 }
-                                                SpinBox {
+                                                IndustrialSpinBox {
                                                     id: fileAddressSpinBox
                                                     from: 0
                                                     to: 65535
                                                     value: 1000
-                                                    editable: true
                                                     Layout.fillWidth: true
                                                 }
 
                                                 Label {
                                                     text: "寄存器数:"
                                                 }
-                                                SpinBox {
+                                                IndustrialSpinBox {
                                                     id: fileRegisterCountSpinBox
                                                     from: 1
                                                     to: 125
                                                     value: 20
-                                                    editable: true
                                                     Layout.fillWidth: true
                                                 }
                                             }
 
-                                            // 按钮靠底
-                                            ColumnLayout {
+                                            // 按钮横排
+                                            RowLayout {
                                                 Layout.fillWidth: true
                                                 Layout.alignment: Qt.AlignBottom
+                                                spacing: 8
 
-                                                Button {
+                                                IndustrialButton {
                                                     text: "查询保持寄存器"
                                                     Layout.fillWidth: true
                                                     onClicked: queryAddressFileContent()
                                                 }
-                                                Button {
+                                                IndustrialButton {
                                                     text: "上传保持寄存器"
                                                     Layout.fillWidth: true
                                                     onClicked: uploadHoldingRegisters()
                                                 }
-                                                Button {
+                                                IndustrialButton {
                                                     text: "下载保持寄存器"
                                                     Layout.fillWidth: true
                                                     onClicked: downloadHoldingRegisters()
@@ -583,7 +776,10 @@ ApplicationWindow {
 
                         // Tab 2: 传感器配置
                         Item {
+                            id: sensorConfigTabItem
+                            implicitHeight: sensorConfigColumn.implicitHeight
                             ColumnLayout {
+                                id: sensorConfigColumn
                                 anchors.fill: parent
                                 spacing: 10
 
@@ -592,9 +788,9 @@ ApplicationWindow {
                                     id: sensorToolbar
                                     Layout.fillWidth: true
                                     Layout.preferredHeight: Math.max(48, sensorToolbarFlow.implicitHeight + 16)
-                                    color: "#F5F9FD"
-                                    radius: 5
-                                    border.color: "#D6E3EF"
+                                    color: "#D1D6DD"
+                                    radius: 4
+                                    border.color: "#A6AEB8"
                                     border.width: 1
 
                                     Flow {
@@ -605,35 +801,33 @@ ApplicationWindow {
 
                                         Label {
                                             text: "传感器配置管理"
+                                            color: root.bodyText
                                             font.bold: false
                                         }
 
                                         Rectangle {
                                             width: 1
                                             height: 20
-                                            color: "#bdc3c7"
+                                            color: "#A0A0A0"
                                         }
 
-                                        Button {
+                                        IndustrialButton {
                                             text: "导入 Excel/CSV"
-                                            icon.name: "document-import"
                                             onClicked: importFileDialog.open()
                                         }
 
-                                        Button {
+                                        IndustrialButton {
                                             text: "导出配置"
-                                            icon.name: "document-export"
                                             onClicked: exportFileDialog.open()
                                         }
 
-                                        Button {
+                                        IndustrialButton {
                                             text: "应用到服务器"
-                                            icon.name: "application-x-executable"
                                             enabled: sensorManager && sensorManager.sensorCount > 0
                                             onClicked: applySensorsToServer()
                                         }
 
-                                        Button {
+                                        IndustrialButton {
                                             text: "测试更新"
                                             onClicked: {
                                                 addLog("===== 测试数据更新 =====");
@@ -654,7 +848,7 @@ ApplicationWindow {
                                         Label {
                                             text: sensorManager ? ("传感器数: " + sensorManager.sensorCount) : "传感器数: 0"
                                             font.pixelSize: 13
-                                            color: "#2980b9"
+                                            color: root.bodyText
                                             font.bold: false
                                         }
                                     }
@@ -670,313 +864,313 @@ ApplicationWindow {
                                         anchors.fill: parent
                                         spacing: 0
 
-                                        // 表格标题行
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.preferredHeight: 35
-                                            color: "#e8e8e8"
-                                            border.color: "#c0c0c0"
-                                            border.width: 1
-
-                                            Row {
-                                                anchors.fill: parent
-                                                spacing: 0
-
-                                                // 使用比例分配宽度，而不是固定宽度
-                                                Repeater {
-                                                    model: [
-                                                        {
-                                                            text: "地址",
-                                                            width: 0.05
-                                                        },
-                                                        {
-                                                            text: "点位名称",
-                                                            width: 0.05
-                                                        },
-                                                        {
-                                                            text: "寄存器类型",
-                                                            width: 0.10
-                                                        },
-                                                        {
-                                                            text: "值类型",
-                                                            width: 0.08,
-                                                            color: "#FF6B35"
-                                                        },
-                                                        {
-                                                            text: "初始值",
-                                                            width: 0.07
-                                                        },
-                                                        {
-                                                            text: "当前值",
-                                                            width: 0.07,
-                                                            color: "#2196F3"
-                                                        },
-                                                        {
-                                                            text: "描述",
-                                                            width: 0.10
-                                                        },
-                                                        {
-                                                            text: "单位",
-                                                            width: 0.08
-                                                        },
-                                                        {
-                                                            text: "最小值",
-                                                            width: 0.12
-                                                        },
-                                                        {
-                                                            text: "最大值",
-                                                            width: 0.12
-                                                        },
-                                                        {
-                                                            text: "只读",
-                                                            width: 0.06
-                                                        },
-                                                        {
-                                                            text: "占用寄存器数",
-                                                            width: 0.10
-                                                        }
-                                                    ]
-
-                                                    Rectangle {
-                                                        width: parent.width * modelData.width
-                                                        height: parent.height
-                                                        color: "transparent"
-                                                        border.color: "#c0c0c0"
-                                                        border.width: 1
-
-                                                        Label {
-                                                            anchors.centerIn: parent
-                                                            text: modelData.text
-                                                            font.bold: true
-                                                            font.pixelSize: 12
-                                                            color: modelData.color || "#000000"
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-
-                                        // 数据显示区域 - ListView
-                                        ListView {
-                                            id: sensorListView
+                                        Flickable {
+                                            id: sensorTableFlick
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
                                             clip: true
-                                            boundsBehavior: Flickable.StopAtBounds
+                                            contentWidth: Math.max(width, root.sensorTableMinWidth)
+                                            contentHeight: height
+                                            flickableDirection: Flickable.HorizontalFlick
 
-                                            model: ListModel {
-                                                id: sensorListModel
-                                            }
-
-                                            delegate: Rectangle {
-                                                width: sensorListView.width
-                                                height: 30
-                                                color: index % 2 === 0 ? "#ffffff" : "#f5f5f5"
-                                                border.color: "#e0e0e0"
+                                            // 表格标题行
+                                            Rectangle {
+                                                id: sensorHeaderRow
+                                                width: sensorTableFlick.contentWidth
+                                                height: 35
+                                                color: "#e8e8e8"
+                                                border.color: "#9DA5AF"
                                                 border.width: 1
 
                                                 Row {
                                                     anchors.fill: parent
                                                     spacing: 0
 
-                                                    // 地址 - 5%
-                                                    Rectangle {
-                                                        width: parent.width * 0.05
-                                                        height: parent.height
-                                                        color: "transparent"
-                                                        border.color: "#e0e0e0"
-                                                        border.width: 1
-                                                        Label {
-                                                            anchors.centerIn: parent
-                                                            text: model.address !== undefined ? model.address : ""
-                                                            font.pixelSize: 11
-                                                            elide: Text.ElideRight
-                                                        }
-                                                    }
+                                                    Repeater {
+                                                        model: [
+                                                            {
+                                                                text: "地址",
+                                                                width: 0.05
+                                                            },
+                                                            {
+                                                                text: "点位名称",
+                                                                width: 0.05
+                                                            },
+                                                            {
+                                                                text: "寄存器类型",
+                                                                width: 0.10
+                                                            },
+                                                            {
+                                                                text: "值类型",
+                                                                width: 0.08
+                                                            },
+                                                            {
+                                                                text: "初始值",
+                                                                width: 0.07
+                                                            },
+                                                            {
+                                                                text: "当前值",
+                                                                width: 0.07
+                                                            },
+                                                            {
+                                                                text: "描述",
+                                                                width: 0.10
+                                                            },
+                                                            {
+                                                                text: "单位",
+                                                                width: 0.08
+                                                            },
+                                                            {
+                                                                text: "最小值",
+                                                                width: 0.12
+                                                            },
+                                                            {
+                                                                text: "最大值",
+                                                                width: 0.12
+                                                            },
+                                                            {
+                                                                text: "只读",
+                                                                width: 0.06
+                                                            },
+                                                            {
+                                                                text: "占用寄存器数",
+                                                                width: 0.10
+                                                            }
+                                                        ]
 
-                                                    // 点位名称 - 5%
-                                                    Rectangle {
-                                                        width: parent.width * 0.05
-                                                        height: parent.height
-                                                        color: "transparent"
-                                                        border.color: "#e0e0e0"
-                                                        border.width: 1
-                                                        Label {
-                                                            anchors.centerIn: parent
-                                                            text: model.pointName || ""
-                                                            font.pixelSize: 11
-                                                            elide: Text.ElideRight
-                                                        }
-                                                    }
+                                                        Rectangle {
+                                                            width: parent.width * modelData.width
+                                                            height: parent.height
+                                                            color: "transparent"
+                                                            border.color: "#9DA5AF"
+                                                            border.width: 1
 
-                                                    // 寄存器类型 - 10%
-                                                    Rectangle {
-                                                        width: parent.width * 0.10
-                                                        height: parent.height
-                                                        color: "transparent"
-                                                        border.color: "#e0e0e0"
-                                                        border.width: 1
-                                                        Label {
-                                                            anchors.centerIn: parent
-                                                            text: model.pointType || ""
-                                                            font.pixelSize: 11
-                                                            elide: Text.ElideRight
-                                                        }
-                                                    }
-
-                                                    // 值类型 - 8%
-                                                    Rectangle {
-                                                        width: parent.width * 0.08
-                                                        height: parent.height
-                                                        color: "transparent"
-                                                        border.color: "#e0e0e0"
-                                                        border.width: 1
-                                                        Label {
-                                                            anchors.centerIn: parent
-                                                            text: model.valueType || "UINT16"
-                                                            font.pixelSize: 11
-                                                            font.bold: true
-                                                            color: "#FF6B35"
-                                                            elide: Text.ElideRight
-                                                        }
-                                                    }
-
-                                                    // 初始值 - 7%
-                                                    Rectangle {
-                                                        width: parent.width * 0.07
-                                                        height: parent.height
-                                                        color: "transparent"
-                                                        border.color: "#e0e0e0"
-                                                        border.width: 1
-                                                        Label {
-                                                            anchors.centerIn: parent
-                                                            text: model.initialValue || ""
-                                                            font.pixelSize: 11
-                                                            elide: Text.ElideRight
-                                                        }
-                                                    }
-
-                                                    // 当前值 - 7%
-                                                    Rectangle {
-                                                        width: parent.width * 0.07
-                                                        height: parent.height
-                                                        color: "transparent"
-                                                        border.color: "#e0e0e0"
-                                                        border.width: 1
-                                                        Label {
-                                                            anchors.centerIn: parent
-                                                            text: model.currentValue || ""
-                                                            font.pixelSize: 11
-                                                            font.bold: true
-                                                            color: "#2196F3"
-                                                            elide: Text.ElideRight
-                                                        }
-                                                    }
-
-                                                    // 描述 - 10%
-                                                    Rectangle {
-                                                        width: parent.width * 0.10
-                                                        height: parent.height
-                                                        color: "transparent"
-                                                        border.color: "#e0e0e0"
-                                                        border.width: 1
-                                                        Label {
-                                                            anchors.centerIn: parent
-                                                            text: model.note || ""
-                                                            font.pixelSize: 11
-                                                            elide: Text.ElideRight
-                                                        }
-                                                    }
-
-                                                    // 单位 - 8%
-                                                    Rectangle {
-                                                        width: parent.width * 0.08
-                                                        height: parent.height
-                                                        color: "transparent"
-                                                        border.color: "#e0e0e0"
-                                                        border.width: 1
-                                                        Label {
-                                                            anchors.centerIn: parent
-                                                            text: model.unit || ""
-                                                            font.pixelSize: 11
-                                                            elide: Text.ElideRight
-                                                        }
-                                                    }
-
-                                                    // 最小值 - 12%
-                                                    Rectangle {
-                                                        width: parent.width * 0.12
-                                                        height: parent.height
-                                                        color: "transparent"
-                                                        border.color: "#e0e0e0"
-                                                        border.width: 1
-                                                        Label {
-                                                            anchors.centerIn: parent
-                                                            text: model.minValue || ""
-                                                            font.pixelSize: 11
-                                                            elide: Text.ElideRight
-                                                        }
-                                                    }
-
-                                                    // 最大值 - 12%
-                                                    Rectangle {
-                                                        width: parent.width * 0.12
-                                                        height: parent.height
-                                                        color: "transparent"
-                                                        border.color: "#e0e0e0"
-                                                        border.width: 1
-                                                        Label {
-                                                            anchors.centerIn: parent
-                                                            text: model.maxValue || ""
-                                                            font.pixelSize: 11
-                                                            elide: Text.ElideRight
-                                                        }
-                                                    }
-
-                                                    // 只读 - 6%
-                                                    Rectangle {
-                                                        width: parent.width * 0.06
-                                                        height: parent.height
-                                                        color: "transparent"
-                                                        border.color: "#e0e0e0"
-                                                        border.width: 1
-                                                        Label {
-                                                            anchors.centerIn: parent
-                                                            text: model.readOnly ? "是" : "否"
-                                                            font.pixelSize: 11
-                                                            elide: Text.ElideRight
-                                                        }
-                                                    }
-                                                    // 占用寄存器数 - 10%
-                                                    Rectangle {
-                                                        width: parent.width * 0.10
-                                                        height: parent.height
-                                                        color: "transparent"
-                                                        border.color: "#e0e0e0"
-                                                        border.width: 1
-                                                        Label {
-                                                            anchors.centerIn: parent
-                                                            text: model.registerCount || ""
-                                                            font.pixelSize: 11
-                                                            elide: Text.ElideRight
+                                                            Label {
+                                                                anchors.centerIn: parent
+                                                                text: modelData.text
+                                                                font.bold: true
+                                                                font.pixelSize: 12
+                                                                color: modelData.color || root.bodyText
+                                                            }
                                                         }
                                                     }
                                                 }
                                             }
 
-                                            // 空状态提示
-                                            Label {
-                                                anchors.centerIn: parent
-                                                visible: sensorListModel.count === 0
-                                                text: "点击'导入 Excel/CSV'加载传感器配置...\n\n支持格式：\n• CSV 文件 (*.csv)\n• Tab 分隔文件 (*.txt)"
-                                                font.pixelSize: 12
-                                                color: "#666666"
-                                                horizontalAlignment: Text.AlignHCenter
+                                            // 数据显示区域 - ListView
+                                            ListView {
+                                                id: sensorListView
+                                                anchors.top: sensorHeaderRow.bottom
+                                                anchors.left: parent.left
+                                                anchors.right: parent.right
+                                                anchors.bottom: parent.bottom
+                                                width: sensorTableFlick.contentWidth
+                                                clip: true
+                                                boundsBehavior: Flickable.StopAtBounds
+
+                                                model: ListModel {
+                                                    id: sensorListModel
+                                                }
+
+                                                delegate: Rectangle {
+                                                    width: sensorListView.width
+                                                    height: 30
+                                                    color: index % 2 === 0 ? "#E5E8EC" : "#DDE1E6"
+                                                    border.color: "#A6ADB7"
+                                                    border.width: 1
+
+                                                    Row {
+                                                        anchors.fill: parent
+                                                        spacing: 0
+
+                                                        Rectangle {
+                                                            width: parent.width * 0.05
+                                                            height: parent.height
+                                                            color: "transparent"
+                                                            border.color: "#A6ADB7"
+                                                            border.width: 1
+                                                            Label {
+                                                                anchors.centerIn: parent
+                                                                text: model.address !== undefined ? model.address : ""
+                                                                font.pixelSize: 11
+                                                                elide: Text.ElideRight
+                                                            }
+                                                        }
+
+                                                        Rectangle {
+                                                            width: parent.width * 0.05
+                                                            height: parent.height
+                                                            color: "transparent"
+                                                            border.color: "#A6ADB7"
+                                                            border.width: 1
+                                                            Label {
+                                                                anchors.centerIn: parent
+                                                                text: model.pointName || ""
+                                                                font.pixelSize: 11
+                                                                elide: Text.ElideRight
+                                                            }
+                                                        }
+
+                                                        Rectangle {
+                                                            width: parent.width * 0.10
+                                                            height: parent.height
+                                                            color: "transparent"
+                                                            border.color: "#A6ADB7"
+                                                            border.width: 1
+                                                            Label {
+                                                                anchors.centerIn: parent
+                                                                text: model.pointType || ""
+                                                                font.pixelSize: 11
+                                                                elide: Text.ElideRight
+                                                            }
+                                                        }
+
+                                                        Rectangle {
+                                                            width: parent.width * 0.08
+                                                            height: parent.height
+                                                            color: "transparent"
+                                                            border.color: "#A6ADB7"
+                                                            border.width: 1
+                                                            Label {
+                                                                anchors.centerIn: parent
+                                                                text: model.valueType || "UINT16"
+                                                                font.pixelSize: 11
+                                                                font.bold: true
+                                                                color: root.bodyText
+                                                                elide: Text.ElideRight
+                                                            }
+                                                        }
+
+                                                        Rectangle {
+                                                            width: parent.width * 0.07
+                                                            height: parent.height
+                                                            color: "transparent"
+                                                            border.color: "#A6ADB7"
+                                                            border.width: 1
+                                                            Label {
+                                                                anchors.centerIn: parent
+                                                                text: model.initialValue || ""
+                                                                font.pixelSize: 11
+                                                                elide: Text.ElideRight
+                                                            }
+                                                        }
+
+                                                        Rectangle {
+                                                            width: parent.width * 0.07
+                                                            height: parent.height
+                                                            color: "transparent"
+                                                            border.color: "#A6ADB7"
+                                                            border.width: 1
+                                                            Label {
+                                                                anchors.centerIn: parent
+                                                                text: model.currentValue || ""
+                                                                font.pixelSize: 11
+                                                                font.bold: true
+                                                                color: root.bodyText
+                                                                elide: Text.ElideRight
+                                                            }
+                                                        }
+
+                                                        Rectangle {
+                                                            width: parent.width * 0.10
+                                                            height: parent.height
+                                                            color: "transparent"
+                                                            border.color: "#A6ADB7"
+                                                            border.width: 1
+                                                            Label {
+                                                                anchors.centerIn: parent
+                                                                text: model.note || ""
+                                                                font.pixelSize: 11
+                                                                elide: Text.ElideRight
+                                                            }
+                                                        }
+
+                                                        Rectangle {
+                                                            width: parent.width * 0.08
+                                                            height: parent.height
+                                                            color: "transparent"
+                                                            border.color: "#A6ADB7"
+                                                            border.width: 1
+                                                            Label {
+                                                                anchors.centerIn: parent
+                                                                text: model.unit || ""
+                                                                font.pixelSize: 11
+                                                                elide: Text.ElideRight
+                                                            }
+                                                        }
+
+                                                        Rectangle {
+                                                            width: parent.width * 0.12
+                                                            height: parent.height
+                                                            color: "transparent"
+                                                            border.color: "#A6ADB7"
+                                                            border.width: 1
+                                                            Label {
+                                                                anchors.centerIn: parent
+                                                                text: model.minValue || ""
+                                                                font.pixelSize: 11
+                                                                elide: Text.ElideRight
+                                                            }
+                                                        }
+
+                                                        Rectangle {
+                                                            width: parent.width * 0.12
+                                                            height: parent.height
+                                                            color: "transparent"
+                                                            border.color: "#A6ADB7"
+                                                            border.width: 1
+                                                            Label {
+                                                                anchors.centerIn: parent
+                                                                text: model.maxValue || ""
+                                                                font.pixelSize: 11
+                                                                elide: Text.ElideRight
+                                                            }
+                                                        }
+
+                                                        Rectangle {
+                                                            width: parent.width * 0.06
+                                                            height: parent.height
+                                                            color: "transparent"
+                                                            border.color: "#A6ADB7"
+                                                            border.width: 1
+                                                            Label {
+                                                                anchors.centerIn: parent
+                                                                text: model.readOnly ? "是" : "否"
+                                                                font.pixelSize: 11
+                                                                elide: Text.ElideRight
+                                                            }
+                                                        }
+
+                                                        Rectangle {
+                                                            width: parent.width * 0.10
+                                                            height: parent.height
+                                                            color: "transparent"
+                                                            border.color: "#A6ADB7"
+                                                            border.width: 1
+                                                            Label {
+                                                                anchors.centerIn: parent
+                                                                text: model.registerCount || ""
+                                                                font.pixelSize: 11
+                                                                elide: Text.ElideRight
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+                                                // 空状态提示
+                                                Label {
+                                                    anchors.centerIn: parent
+                                                    visible: sensorListModel.count === 0
+                                                    text: "点击'导入 Excel/CSV'加载传感器配置...\n\n支持格式：\n• CSV 文件 (*.csv)\n• Tab 分隔文件 (*.txt)"
+                                                    font.pixelSize: 12
+                                                    color: root.mutedText
+                                                    horizontalAlignment: Text.AlignHCenter
+                                                }
+
+                                                ScrollBar.vertical: IndustrialScrollBar {}
                                             }
 
-                                            ScrollBar.vertical: ScrollBar {
-                                                policy: ScrollBar.AsNeeded
-                                            }
+                                            ScrollBar.horizontal: IndustrialScrollBar {}
                                         }
                                     }
                                 }
@@ -993,8 +1187,10 @@ ApplicationWindow {
         id: logWindow
         width: 800
         height: 500
+        minimumWidth: 700
+        minimumHeight: 420
         title: "操作日志"
-        color: root.pageBgTop
+        color: "#E9E9E9"
 
         onClosing: {
             hide();
@@ -1003,60 +1199,68 @@ ApplicationWindow {
         ColumnLayout {
             anchors.fill: parent
             anchors.margins: 10
-            spacing: 5
+            spacing: 8
 
-            RowLayout {
+            Rectangle {
                 Layout.fillWidth: true
-                spacing: 10
+                Layout.preferredHeight: 46
+                radius: 8
+                color: "#F3F3F3"
+                border.color: "#C8C8C8"
+                border.width: 1
 
-                CheckBox {
-                    id: packetLogCheckBox
-                    text: "记录收发包"
-                    checked: enablePacketLog
-                    font.pixelSize: 11
-                    onCheckedChanged: enablePacketLog = checked
-                    ToolTip.visible: hovered
-                    ToolTip.text: "启用后会记录每个Modbus请求/响应的详细报文（高频操作，建议关闭以节省内存）"
-                }
+                RowLayout {
+                    anchors.fill: parent
+                    anchors.margins: 8
+                    spacing: 10
 
-                CheckBox {
-                    id: requestLogCheckBox
-                    text: "记录请求"
-                    checked: enableRequestLog
-                    font.pixelSize: 11
-                    onCheckedChanged: enableRequestLog = checked
-                    ToolTip.visible: hovered
-                    ToolTip.text: "记录每个Modbus请求的功能码"
-                }
+                    IndustrialCheckBox {
+                        id: packetLogCheckBox
+                        text: "记录收发包"
+                        checked: enablePacketLog
+                        onCheckedChanged: enablePacketLog = checked
+                        ToolTip.visible: hovered
+                        ToolTip.text: "启用后会记录每个Modbus请求/响应的详细报文（高频操作，建议关闭以节省内存）"
+                    }
 
-                Label {
-                    text: "最大行数:"
-                    font.pixelSize: 11
-                }
-                SpinBox {
-                    id: maxLogLinesSpinBox
-                    from: 100
-                    to: 5000
-                    value: maxLogLines
-                    stepSize: 100
-                    editable: true
-                    Layout.preferredWidth: 100
-                    font.pixelSize: 11
-                    onValueChanged: maxLogLines = value
-                    ToolTip.visible: hovered
-                    ToolTip.text: "日志超过此行数时自动清理旧日志"
-                }
+                    IndustrialCheckBox {
+                        id: requestLogCheckBox
+                        text: "记录请求"
+                        checked: enableRequestLog
+                        onCheckedChanged: enableRequestLog = checked
+                        ToolTip.visible: hovered
+                        ToolTip.text: "记录每个Modbus请求的功能码"
+                    }
 
-                Item {
-                    Layout.fillWidth: true
-                }
+                    Label {
+                        text: "最大行数:"
+                        color: root.bodyText
+                        font.pixelSize: 11
+                    }
+                    IndustrialSpinBox {
+                        id: maxLogLinesSpinBox
+                        from: 100
+                        to: 5000
+                        value: maxLogLines
+                        stepSize: 100
+                        Layout.preferredWidth: 120
+                        font.pixelSize: 11
+                        onValueChanged: maxLogLines = value
+                        ToolTip.visible: hovered
+                        ToolTip.text: "日志超过此行数时自动清理旧日志"
+                    }
 
-                Button {
-                    text: "清空日志"
-                    Layout.preferredWidth: 80
-                    Layout.preferredHeight: 25
-                    font.pixelSize: 11
-                    onClicked: clearLog()
+                    Item {
+                        Layout.fillWidth: true
+                    }
+
+                    IndustrialButton {
+                        text: "清空日志"
+                        Layout.preferredWidth: 90
+                        Layout.preferredHeight: 30
+                        font.pixelSize: 11
+                        onClicked: clearLog()
+                    }
                 }
             }
 
@@ -1064,30 +1268,28 @@ ApplicationWindow {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 clip: true
+                background: Rectangle {
+                    radius: 8
+                    color: "#FFFFFF"
+                    border.color: "#C8C8C8"
+                    border.width: 1
+                }
 
                 TextArea {
                     id: logDisplay
                     readOnly: true
                     wrapMode: TextEdit.Wrap
                     font.family: "Consolas, Monaco, monospace"
-                    font.pixelSize: 11
+                    font.pixelSize: 12
+                    selectByMouse: true
                     text: "服务器日志将显示在这里...\n"
                     background: Rectangle {
                         radius: 8
-                        gradient: Gradient {
-                            GradientStop {
-                                position: 0.0
-                                color: "#1C2A39"
-                            }
-                            GradientStop {
-                                position: 1.0
-                                color: "#15202C"
-                            }
-                        }
-                        border.color: "#32485D"
+                        color: "#FAFAFA"
+                        border.color: "#D0D0D0"
                         border.width: 1
                     }
-                    color: "#ecf0f1"
+                    color: "#202020"
                 }
             }
         }
@@ -1146,7 +1348,7 @@ ApplicationWindow {
         contentItem: Label {
             text: "Qt6 Modbus Slave Simulator\n\n用于调试 Modbus TCP / RTU 从站、文件寄存器与传感器配置。\n\n新增菜单栏后，可直接从顶部访问导入导出、服务控制与日志操作。"
             wrapMode: Text.WordWrap
-            color: "#334155"
+            color: root.bodyText
             padding: 14
         }
     }
@@ -1175,10 +1377,10 @@ ApplicationWindow {
 
             Label {
                 text: "TCP 监听端口"
-                color: "#35506A"
+                color: root.bodyText
             }
 
-            TextField {
+            IndustrialTextField {
                 id: tcpPortFieldInDialog
                 Layout.fillWidth: true
                 placeholderText: "1 - 65535"
@@ -1220,7 +1422,7 @@ ApplicationWindow {
             Label {
                 text: "串口"
             }
-            TextField {
+            IndustrialTextField {
                 id: rtuPortFieldInDialog
                 Layout.fillWidth: true
                 placeholderText: "COM1"
@@ -1229,7 +1431,7 @@ ApplicationWindow {
             Label {
                 text: "波特率"
             }
-            ComboBox {
+            IndustrialComboBox {
                 id: baudRateComboInDialog
                 Layout.fillWidth: true
                 model: root.rtuBaudRates

@@ -1,37 +1,9 @@
 #include "ModbusDataStore.h"
-#include "DatabaseManager.h"
 #include <QDebug>
 
 ModbusDataStore::ModbusDataStore(QObject *parent)
-    : QObject(parent), m_databaseEnabled(false)
+    : QObject(parent)
 {
-}
-
-void ModbusDataStore::setDatabaseEnabled(bool enabled)
-{
-    m_databaseEnabled = enabled;
-    if (enabled) {
-        qDebug() << "[DataStore] 数据库模式已启用";
-    } else {
-        qDebug() << "[DataStore] 数据库模式已禁用，仅使用内存存储";
-    }
-}
-
-bool ModbusDataStore::loadFromDatabase()
-{
-    if (!m_databaseEnabled || !DatabaseManager::instance().isConnected()) {
-        qWarning() << "[DataStore] 无法从数据库加载：数据库未启用或未连接";
-        return false;
-    }
-
-    qDebug() << "[DataStore] 开始从数据库加载数据...";
-
-    // 注意：这里我们不从数据库加载所有数据到内存
-    // 因为对于大数据量这会导致内存问题
-    // 数据将在首次访问时按需加载或直接从数据库读取
-
-    qDebug() << "[DataStore] 数据库模式已就绪，数据将按需从数据库读写";
-    return true;
 }
 
 // ========== 线圈操作 ==========
@@ -70,13 +42,6 @@ bool ModbusDataStore::writeCoil(quint16 address, bool value)
         return false;
     }
 
-    // 写入数据库（如果启用）
-    if (m_databaseEnabled && DatabaseManager::instance().isConnected()) {
-        if (!DatabaseManager::instance().writeCoil(address, value)) {
-            qWarning() << "[DataStore] 写入线圈到数据库失败:" << address;
-        }
-    }
-
     // 写入内存缓存
     {
         QWriteLocker locker(&m_coilsLock);
@@ -107,13 +72,6 @@ bool ModbusDataStore::writeCoils(quint16 startAddress, const QBitArray &values)
     {
         qWarning() << "[DataStore] 批量写入线圈地址超出范围: " << startAddress << "-" << endAddress << "(最大:" << MAX_COIL_ADDRESS - 1 << ")";
         return false;
-    }
-
-    // 写入数据库（如果启用）
-    if (m_databaseEnabled && DatabaseManager::instance().isConnected()) {
-        if (!DatabaseManager::instance().writeCoils(startAddress, values)) {
-            qWarning() << "[DataStore] 批量写入线圈到数据库失败";
-        }
     }
 
     QVector<QPair<quint16, bool>> changes;
@@ -178,13 +136,6 @@ bool ModbusDataStore::writeDiscreteInput(quint16 address, bool value)
         return false;
     }
 
-    // 写入数据库（如果启用）
-    if (m_databaseEnabled && DatabaseManager::instance().isConnected()) {
-        if (!DatabaseManager::instance().writeDiscreteInput(address, value)) {
-            qWarning() << "[DataStore] 写入离散输入到数据库失败:" << address;
-        }
-    }
-
     {
         QWriteLocker locker(&m_discreteInputsLock);
         m_discreteInputs[address] = value;
@@ -231,13 +182,6 @@ bool ModbusDataStore::writeHoldingRegister(quint16 address, quint16 value)
         return false;
     }
 
-    // 写入数据库（如果启用）
-    if (m_databaseEnabled && DatabaseManager::instance().isConnected()) {
-        if (!DatabaseManager::instance().writeHoldingRegister(address, value)) {
-            qWarning() << "[DataStore] 写入保持寄存器到数据库失败:" << address;
-        }
-    }
-
     {
         QWriteLocker locker(&m_holdingRegistersLock);
         m_holdingRegisters[address] = value;
@@ -267,13 +211,6 @@ bool ModbusDataStore::writeHoldingRegisters(quint16 startAddress, const QVector<
     {
         qWarning() << "[DataStore] 批量写入保持寄存器地址超出范围: " << startAddress << "-" << endAddress << "(最大:" << MAX_HOLDING_REGISTER_ADDRESS - 1 << ")";
         return false;
-    }
-
-    // 写入数据库（如果启用）
-    if (m_databaseEnabled && DatabaseManager::instance().isConnected()) {
-        if (!DatabaseManager::instance().writeHoldingRegisters(startAddress, values)) {
-            qWarning() << "[DataStore] 批量写入保持寄存器到数据库失败";
-        }
     }
 
     QVector<quint16> writtenValues;
@@ -338,13 +275,6 @@ bool ModbusDataStore::writeInputRegister(quint16 address, quint16 value)
         return false;
     }
 
-    // 写入数据库（如果启用）
-    if (m_databaseEnabled && DatabaseManager::instance().isConnected()) {
-        if (!DatabaseManager::instance().writeInputRegister(address, value)) {
-            qWarning() << "[DataStore] 写入输入寄存器到数据库失败:" << address;
-        }
-    }
-
     qDebug() << "[DataStore] 写入输入寄存器 - 地址:" << address << "值:" << value;
     {
         QWriteLocker locker(&m_inputRegistersLock);
@@ -394,15 +324,6 @@ void ModbusDataStore::initializeInputRegisters(quint16 startAddress, quint16 cou
 
 void ModbusDataStore::clearAll()
 {
-    // 清理数据库（如果启用）
-    if (m_databaseEnabled && DatabaseManager::instance().isConnected()) {
-        DatabaseManager::instance().clearAllCoils();
-        DatabaseManager::instance().clearAllDiscreteInputs();
-        DatabaseManager::instance().clearAllHoldingRegisters();
-        DatabaseManager::instance().clearAllInputRegisters();
-        qDebug() << "[DataStore] 已清理数据库中的所有数据";
-    }
-
     // 清理内存缓存
     {
         QWriteLocker locker(&m_coilsLock);
