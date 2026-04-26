@@ -449,7 +449,7 @@ void ModbusServer::initializeData()
     // m_fileStore->createFile(1, "温度数据文件", 256);
     // m_fileStore->createFile(2, "状态数据文件", 128);
 
-    // 初始化地址存储
+    // 初始化保持寄存器（文件）地址存储
     m_addressStore->initializeRegion(1000, 200);
 
     qDebug() << "数据初始化完成";
