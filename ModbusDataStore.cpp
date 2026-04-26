@@ -21,6 +21,12 @@ bool ModbusDataStore::readCoils(quint16 startAddress, quint16 count, QBitArray &
         return false;
     }
 
+    quint32 endAddress = static_cast<quint32>(startAddress) + static_cast<quint32>(count) - 1;
+    if (startAddress >= MAX_COIL_ADDRESS || endAddress >= MAX_COIL_ADDRESS)
+    {
+        return false;
+    }
+
     QReadLocker locker(&m_coilsLock);
     values.resize(count);
 
@@ -115,6 +121,12 @@ bool ModbusDataStore::readDiscreteInputs(quint16 startAddress, quint16 count, QB
         return false;
     }
 
+    quint32 endAddress = static_cast<quint32>(startAddress) + static_cast<quint32>(count) - 1;
+    if (startAddress >= MAX_DISCRETE_INPUT_ADDRESS || endAddress >= MAX_DISCRETE_INPUT_ADDRESS)
+    {
+        return false;
+    }
+
     QReadLocker locker(&m_discreteInputsLock);
     values.resize(count);
 
@@ -156,6 +168,12 @@ quint16 ModbusDataStore::readHoldingRegister(quint16 address) const
 bool ModbusDataStore::readHoldingRegisters(quint16 startAddress, quint16 count, QVector<quint16> &values) const
 {
     if (count == 0 || count > ModbusConst::MAX_READ_REGISTERS)
+    {
+        return false;
+    }
+
+    quint32 endAddress = static_cast<quint32>(startAddress) + static_cast<quint32>(count) - 1;
+    if (startAddress >= MAX_HOLDING_REGISTER_ADDRESS || endAddress >= MAX_HOLDING_REGISTER_ADDRESS)
     {
         return false;
     }
@@ -249,6 +267,12 @@ quint16 ModbusDataStore::readInputRegister(quint16 address) const
 bool ModbusDataStore::readInputRegisters(quint16 startAddress, quint16 count, QVector<quint16> &values) const
 {
     if (count == 0 || count > ModbusConst::MAX_READ_REGISTERS)
+    {
+        return false;
+    }
+
+    quint32 endAddress = static_cast<quint32>(startAddress) + static_cast<quint32>(count) - 1;
+    if (startAddress >= MAX_INPUT_REGISTER_ADDRESS || endAddress >= MAX_INPUT_REGISTER_ADDRESS)
     {
         return false;
     }

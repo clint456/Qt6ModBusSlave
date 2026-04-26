@@ -1,0 +1,218 @@
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_protocol_header
+02:14:49 [INFO] modbus.protocol.tcp: 连接 TCP 127.0.0.1:502，单元标识 unit_id=1
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=1 unit=1 pdu=03 00 00 00 01
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=1 unit=1 pdu=03 02 10 E1
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_protocol_header -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_read_and_write_coils
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=2 unit=1 pdu=01 00 00 00 01
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=2 unit=1 pdu=01 01 01
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=3 unit=1 pdu=05 00 00 00 00
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=3 unit=1 pdu=05 00 00 00 00
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=4 unit=1 pdu=01 00 00 00 01
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=4 unit=1 pdu=01 01 00
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_read_and_write_coils -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_read_discrete_inputs
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=5 unit=1 pdu=02 00 00 00 08
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=5 unit=1 pdu=02 01 00
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_read_discrete_inputs -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_read_and_write_registers
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=6 unit=1 pdu=03 00 00 00 01
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=6 unit=1 pdu=03 02 10 E1
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=7 unit=1 pdu=06 00 00 04 D2
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=7 unit=1 pdu=06 00 00 04 D2
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=8 unit=1 pdu=03 00 00 00 01
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=8 unit=1 pdu=03 02 04 D2
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_read_and_write_registers -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_read_input_registers
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=9 unit=1 pdu=04 00 00 00 04
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=9 unit=1 pdu=04 08 00 00 00 00 00 00 00 00
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_read_input_registers -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_batch_operations
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=10 unit=1 pdu=0F 00 0A 00 09 02 4D 01
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=10 unit=1 pdu=0F 00 0A 00 09
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=11 unit=1 pdu=01 00 0A 00 09
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=11 unit=1 pdu=01 02 4D 01
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=12 unit=1 pdu=10 00 14 00 03 06 00 64 00 C8 01 2C
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=12 unit=1 pdu=10 00 14 00 03
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=13 unit=1 pdu=03 00 14 00 03
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=13 unit=1 pdu=03 06 00 64 00 C8 01 2C
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_batch_operations -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_exception_cases
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=14 unit=1 pdu=7F 00 00 00 00
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=14 unit=1 pdu=FF 01
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=15 unit=1 pdu=03 27 0F 00 02
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=15 unit=1 pdu=83 02
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=16 unit=1 pdu=05 00 00 12 34
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=16 unit=1 pdu=85 03
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=17 unit=1 pdu=10 00 00 00 02 02 00 01 00 02
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=17 unit=1 pdu=90 03
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_exception_cases -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_transaction_id_echo_sequence
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=18 unit=1 pdu=03 00 00 00 01
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=18 unit=1 pdu=03 02 04 D2
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=19 unit=1 pdu=03 00 01 00 01
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=19 unit=1 pdu=03 02 00 00
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_transaction_id_echo_sequence -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_unsupported_standard_function_codes[7]
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=20 unit=1 pdu=07 00 00 00 00
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=20 unit=1 pdu=87 01
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_unsupported_standard_function_codes[7] -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_unsupported_standard_function_codes[8]
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=21 unit=1 pdu=08 00 00 00 00
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=21 unit=1 pdu=88 01
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_unsupported_standard_function_codes[8] -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_unsupported_standard_function_codes[11]
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=22 unit=1 pdu=0B 00 00 00 00
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=22 unit=1 pdu=8B 01
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_unsupported_standard_function_codes[11] -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_unsupported_standard_function_codes[12]
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=23 unit=1 pdu=0C 00 00 00 00
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=23 unit=1 pdu=8C 01
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_unsupported_standard_function_codes[12] -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_unsupported_standard_function_codes[17]
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=24 unit=1 pdu=11 00 00 00 00
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=24 unit=1 pdu=91 01
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_unsupported_standard_function_codes[17] -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_unsupported_standard_function_codes[22]
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=25 unit=1 pdu=16 00 00 00 00
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=25 unit=1 pdu=96 01
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_unsupported_standard_function_codes[22] -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_unsupported_standard_function_codes[23]
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=26 unit=1 pdu=17 00 00 00 00
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=26 unit=1 pdu=97 01
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_unsupported_standard_function_codes[23] -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_read_quantity_limits[1-2000-0-2001]
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=27 unit=1 pdu=01 00 00 07 D0
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=27 unit=1 pdu=01 FA 00 34 05 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=28 unit=1 pdu=01 00 00 00 00
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=28 unit=1 pdu=81 03
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=29 unit=1 pdu=01 00 00 07 D1
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=29 unit=1 pdu=81 03
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_read_quantity_limits[1-2000-0-2001] -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_read_quantity_limits[2-2000-0-2001]
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=30 unit=1 pdu=02 00 00 07 D0
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=30 unit=1 pdu=02 FA 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=31 unit=1 pdu=02 00 00 00 00
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=31 unit=1 pdu=82 03
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=32 unit=1 pdu=02 00 00 07 D1
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=32 unit=1 pdu=82 03
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_read_quantity_limits[2-2000-0-2001] -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_read_quantity_limits[3-125-0-126]
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=33 unit=1 pdu=03 00 00 00 7D
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=33 unit=1 pdu=03 FA 04 D2 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 64 00 C8 01 2C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=34 unit=1 pdu=03 00 00 00 00
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=34 unit=1 pdu=83 03
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=35 unit=1 pdu=03 00 00 00 7E
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=35 unit=1 pdu=83 03
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_read_quantity_limits[3-125-0-126] -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_read_quantity_limits[4-125-0-126]
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=36 unit=1 pdu=04 00 00 00 7D
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=36 unit=1 pdu=04 FA 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=37 unit=1 pdu=04 00 00 00 00
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=37 unit=1 pdu=84 03
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=38 unit=1 pdu=04 00 00 00 7E
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=38 unit=1 pdu=84 03
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_read_quantity_limits[4-125-0-126] -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_read_address_boundaries[1]
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=39 unit=1 pdu=01 27 0F 00 01
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=39 unit=1 pdu=01 01 01
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=40 unit=1 pdu=01 27 0F 00 02
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=40 unit=1 pdu=81 02
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_read_address_boundaries[1] -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_read_address_boundaries[2]
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=41 unit=1 pdu=02 27 0F 00 01
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=41 unit=1 pdu=02 01 00
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=42 unit=1 pdu=02 27 0F 00 02
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=42 unit=1 pdu=82 02
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_read_address_boundaries[2] -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_read_address_boundaries[3]
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=43 unit=1 pdu=03 27 0F 00 01
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=43 unit=1 pdu=03 02 55 AA
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=44 unit=1 pdu=03 27 0F 00 02
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=44 unit=1 pdu=83 02
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_read_address_boundaries[3] -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_read_address_boundaries[4]
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=45 unit=1 pdu=04 27 0F 00 01
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=45 unit=1 pdu=04 02 00 00
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=46 unit=1 pdu=04 27 0F 00 02
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=46 unit=1 pdu=84 02
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_read_address_boundaries[4] -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_write_single_address_boundaries[5-'\x0f\xff\x00-'\x10\xff\x00]
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=47 unit=1 pdu=05 27 0F FF 00
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=47 unit=1 pdu=05 27 0F FF 00
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=48 unit=1 pdu=05 27 10 FF 00
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=48 unit=1 pdu=85 02
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_write_single_address_boundaries[5-'\x0f\xff\x00-'\x10\xff\x00] -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_write_single_address_boundaries[6-'\x0f\x13W-'\x10\x13W]
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=49 unit=1 pdu=06 27 0F 13 57
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=49 unit=1 pdu=06 27 0F 13 57
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=50 unit=1 pdu=06 27 10 13 57
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=50 unit=1 pdu=86 02
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_write_single_address_boundaries[6-'\x0f\x13W-'\x10\x13W] -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_write_multi_address_boundaries[15-9998-9999-2-\x03]
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=51 unit=1 pdu=0F 27 0E 00 02 01 03
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=51 unit=1 pdu=0F 27 0E 00 02
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=52 unit=1 pdu=0F 27 0F 00 02 01 03
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=52 unit=1 pdu=8F 02
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_write_multi_address_boundaries[15-9998-9999-2-\x03] -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_write_multi_address_boundaries[16-9998-9999-2-\xaaUU\xaa]
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=53 unit=1 pdu=10 27 0E 00 02 04 AA 55 55 AA
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=53 unit=1 pdu=10 27 0E 00 02
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=54 unit=1 pdu=10 27 0F 00 02 04 AA 55 55 AA
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=54 unit=1 pdu=90 02
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_write_multi_address_boundaries[16-9998-9999-2-\xaaUU\xaa] -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_write_multi_limits_and_byte_count[15-1969-1968-\x00-2]
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=55 unit=1 pdu=0F 00 00 00 00 00
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=55 unit=1 pdu=8F 03
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=56 unit=1 pdu=0F 00 00 07 B1 01 00
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=56 unit=1 pdu=8F 03
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=57 unit=1 pdu=0F 00 00 07 B0 F6 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=57 unit=1 pdu=0F 00 00 07 B0
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=58 unit=1 pdu=0F 00 00 00 01 02 00
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=58 unit=1 pdu=8F 03
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_write_multi_limits_and_byte_count[15-1969-1968-\x00-2] -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_write_multi_limits_and_byte_count[16-124-123-\x124-1]
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=59 unit=1 pdu=10 00 00 00 00 00
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=59 unit=1 pdu=90 03
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=60 unit=1 pdu=10 00 00 00 7C 02 12 34
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=60 unit=1 pdu=90 03
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=61 unit=1 pdu=10 00 00 00 7B F6 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=61 unit=1 pdu=10 00 00 00 7B
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=62 unit=1 pdu=10 00 00 00 01 01 12 34
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=62 unit=1 pdu=90 03
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_write_multi_limits_and_byte_count[16-124-123-\x124-1] -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_short_request_pdu_returns_illegal_data_value[1-\x00\x00\x00]
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=63 unit=1 pdu=01 00 00 00
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=63 unit=1 pdu=81 03
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_short_request_pdu_returns_illegal_data_value[1-\x00\x00\x00] -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_short_request_pdu_returns_illegal_data_value[2-\x00\x00\x00]
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=64 unit=1 pdu=02 00 00 00
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=64 unit=1 pdu=82 03
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_short_request_pdu_returns_illegal_data_value[2-\x00\x00\x00] -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_short_request_pdu_returns_illegal_data_value[3-\x00\x00\x00]
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=65 unit=1 pdu=03 00 00 00
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=65 unit=1 pdu=83 03
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_short_request_pdu_returns_illegal_data_value[3-\x00\x00\x00] -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_short_request_pdu_returns_illegal_data_value[4-\x00\x00\x00]
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=66 unit=1 pdu=04 00 00 00
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=66 unit=1 pdu=84 03
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_short_request_pdu_returns_illegal_data_value[4-\x00\x00\x00] -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_short_request_pdu_returns_illegal_data_value[5-\x00\x00\x00]
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=67 unit=1 pdu=05 00 00 00
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=67 unit=1 pdu=85 03
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_short_request_pdu_returns_illegal_data_value[5-\x00\x00\x00] -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_short_request_pdu_returns_illegal_data_value[6-\x00\x00\x00]
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=68 unit=1 pdu=06 00 00 00
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=68 unit=1 pdu=86 03
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_short_request_pdu_returns_illegal_data_value[6-\x00\x00\x00] -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_short_request_pdu_returns_illegal_data_value[15-\x00\x00\x00\x00]
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=69 unit=1 pdu=0F 00 00 00 00
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=69 unit=1 pdu=8F 03
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_short_request_pdu_returns_illegal_data_value[15-\x00\x00\x00\x00] -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_tcp_short_request_pdu_returns_illegal_data_value[16-\x00\x00\x00\x00]
+02:14:49 [INFO] modbus.protocol.tcp: 发送请求 tid=70 unit=1 pdu=10 00 00 00 00
+02:14:49 [INFO] modbus.protocol.tcp: 接收响应 tid=70 unit=1 pdu=90 03
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_tcp_short_request_pdu_returns_illegal_data_value[16-\x00\x00\x00\x00] -> PASSED
+02:14:49 [INFO] modbus.protocol.pytest: [用例开始] test_protocol_regression.py::test_rtu_single_register_roundtrip
+02:14:49 [INFO] modbus.protocol.pytest: [用例结果] test_protocol_regression.py::test_rtu_single_register_roundtrip -> SKIPPED
+02:14:49 [INFO] modbus.protocol.tcp: 断开 TCP 127.0.0.1:502

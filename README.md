@@ -206,6 +206,16 @@ client.write_registers(10, [100, 200, 300], slave=1)
 client.close()
 ```
 
+### 协议回归测试
+
+项目根目录下新增了 [modbus_protocol_tests](modbus_protocol_tests) 文件夹，用于做标准 Modbus 协议回归测试，并输出 pytest 风格报告。
+
+- `initialize_test_data.py`：在测试前自动写入已知测试数据
+- `test_protocol_regression.py`：pytest 断言式回归测试
+- `run_all.py`：一键完成初始化、测试执行和 junit XML 报告输出
+
+运行完成后会生成 `modbus_protocol_tests/reports/modbus_protocol_report.xml`，建议把它作为每次修改 Modbus 协议层之后的标准回归入口。
+
 ## 项目结构
 
 ```
@@ -219,6 +229,7 @@ Qt6ModBusSlave/
 ├── FileStore.h/cpp             # 文件寄存器存储
 ├── ModbusServer.h/cpp          # Modbus 服务器核心
 ├── SensorModel.h/cpp           # 传感器配置模型
+├── modbus_protocol_tests/      # 协议回归测试脚本
 └── README.md                   # 本文档
 ```
 

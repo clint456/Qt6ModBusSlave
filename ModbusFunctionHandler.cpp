@@ -186,7 +186,7 @@ QByteArray ModbusFunctionHandler::handleWriteSingleCoil(const QByteArray &reques
 
     bool coilValue = (value == 0xFF00);
     if (!m_dataStore->writeCoil(address, coilValue)) {
-        return buildErrorResponse(WriteSingleCoil, SlaveDeviceFailure);
+        return buildErrorResponse(WriteSingleCoil, IllegalDataAddress);
     }
 
     // 回显请求
@@ -210,7 +210,7 @@ QByteArray ModbusFunctionHandler::handleWriteSingleRegister(const QByteArray &re
 
     if (!m_dataStore->writeHoldingRegister(address, value)) {
         qDebug() << "错误: 写入失败";
-        return buildErrorResponse(WriteSingleRegister, SlaveDeviceFailure);
+        return buildErrorResponse(WriteSingleRegister, IllegalDataAddress);
     }
 
     qDebug() << "成功写入寄存器";
@@ -248,7 +248,7 @@ QByteArray ModbusFunctionHandler::handleWriteMultipleCoils(const QByteArray &req
     }
 
     if (!m_dataStore->writeCoils(startAddress, values)) {
-        return buildErrorResponse(WriteMultipleCoils, SlaveDeviceFailure);
+        return buildErrorResponse(WriteMultipleCoils, IllegalDataAddress);
     }
 
     QByteArray response;
@@ -288,7 +288,7 @@ QByteArray ModbusFunctionHandler::handleWriteMultipleRegisters(const QByteArray 
     }
 
     if (!m_dataStore->writeHoldingRegisters(startAddress, values)) {
-        return buildErrorResponse(WriteMultipleRegisters, SlaveDeviceFailure);
+        return buildErrorResponse(WriteMultipleRegisters, IllegalDataAddress);
     }
 
     QByteArray response;

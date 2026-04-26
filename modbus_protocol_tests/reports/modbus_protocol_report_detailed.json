@@ -1,0 +1,346 @@
+{
+  "cases": [
+    {
+      "node": "test_protocol_regression::test_tcp_protocol_header",
+      "case": "test_tcp_protocol_header",
+      "status": "passed",
+      "duration_seconds": "0.002",
+      "expected_result_type": "正常响应",
+      "coverage": "MBAP 头字段(transaction/protocol/length/unit-id)校验；FC03 响应结构合法性",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_read_and_write_coils",
+      "case": "test_tcp_read_and_write_coils",
+      "status": "passed",
+      "duration_seconds": "0.002",
+      "expected_result_type": "正常响应",
+      "coverage": "FC01 读线圈；FC05 写单线圈；写后读一致性验证",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_read_discrete_inputs",
+      "case": "test_tcp_read_discrete_inputs",
+      "status": "passed",
+      "duration_seconds": "0.001",
+      "expected_result_type": "正常响应",
+      "coverage": "FC02 读离散输入；位打包/解包一致性",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_read_and_write_registers",
+      "case": "test_tcp_read_and_write_registers",
+      "status": "passed",
+      "duration_seconds": "0.001",
+      "expected_result_type": "正常响应",
+      "coverage": "FC03 读保持寄存器；FC06 写单寄存器；寄存器写后读回一致性",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_read_input_registers",
+      "case": "test_tcp_read_input_registers",
+      "status": "passed",
+      "duration_seconds": "0.001",
+      "expected_result_type": "正常响应",
+      "coverage": "FC04 读输入寄存器；寄存器字节序解析校验",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_batch_operations",
+      "case": "test_tcp_batch_operations",
+      "status": "passed",
+      "duration_seconds": "0.002",
+      "expected_result_type": "正常响应",
+      "coverage": "FC0F 批量写线圈；FC10 批量写保持寄存器；批量写后读回一致性",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_exception_cases",
+      "case": "test_tcp_exception_cases",
+      "status": "passed",
+      "duration_seconds": "0.002",
+      "expected_result_type": "异常响应（预期异常）",
+      "coverage": "非法功能码异常(0x01)；非法地址异常(0x02)；非法数据值异常(0x03)",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_transaction_id_echo_sequence",
+      "case": "test_tcp_transaction_id_echo_sequence",
+      "status": "passed",
+      "duration_seconds": "0.001",
+      "expected_result_type": "正常响应",
+      "coverage": "MBAP Transaction ID 回显一致性；多请求顺序一致性",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_unsupported_standard_function_codes[7]",
+      "case": "test_tcp_unsupported_standard_function_codes[7]",
+      "status": "passed",
+      "duration_seconds": "0.000",
+      "expected_result_type": "异常响应（预期异常）",
+      "coverage": "未实现标准功能码返回非法功能异常(0x01)",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_unsupported_standard_function_codes[8]",
+      "case": "test_tcp_unsupported_standard_function_codes[8]",
+      "status": "passed",
+      "duration_seconds": "0.000",
+      "expected_result_type": "异常响应（预期异常）",
+      "coverage": "未实现标准功能码返回非法功能异常(0x01)",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_unsupported_standard_function_codes[11]",
+      "case": "test_tcp_unsupported_standard_function_codes[11]",
+      "status": "passed",
+      "duration_seconds": "0.000",
+      "expected_result_type": "异常响应（预期异常）",
+      "coverage": "未实现标准功能码返回非法功能异常(0x01)",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_unsupported_standard_function_codes[12]",
+      "case": "test_tcp_unsupported_standard_function_codes[12]",
+      "status": "passed",
+      "duration_seconds": "0.000",
+      "expected_result_type": "异常响应（预期异常）",
+      "coverage": "未实现标准功能码返回非法功能异常(0x01)",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_unsupported_standard_function_codes[17]",
+      "case": "test_tcp_unsupported_standard_function_codes[17]",
+      "status": "passed",
+      "duration_seconds": "0.001",
+      "expected_result_type": "异常响应（预期异常）",
+      "coverage": "未实现标准功能码返回非法功能异常(0x01)",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_unsupported_standard_function_codes[22]",
+      "case": "test_tcp_unsupported_standard_function_codes[22]",
+      "status": "passed",
+      "duration_seconds": "0.001",
+      "expected_result_type": "异常响应（预期异常）",
+      "coverage": "未实现标准功能码返回非法功能异常(0x01)",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_unsupported_standard_function_codes[23]",
+      "case": "test_tcp_unsupported_standard_function_codes[23]",
+      "status": "passed",
+      "duration_seconds": "0.000",
+      "expected_result_type": "异常响应（预期异常）",
+      "coverage": "未实现标准功能码返回非法功能异常(0x01)",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_read_quantity_limits[1-2000-0-2001]",
+      "case": "test_tcp_read_quantity_limits[1-2000-0-2001]",
+      "status": "passed",
+      "duration_seconds": "0.003",
+      "expected_result_type": "边界混合（正常+异常）",
+      "coverage": "FC01/02/03/04 读数量上下限校验；非法数量返回异常(0x03)",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_read_quantity_limits[2-2000-0-2001]",
+      "case": "test_tcp_read_quantity_limits[2-2000-0-2001]",
+      "status": "passed",
+      "duration_seconds": "0.002",
+      "expected_result_type": "边界混合（正常+异常）",
+      "coverage": "FC01/02/03/04 读数量上下限校验；非法数量返回异常(0x03)",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_read_quantity_limits[3-125-0-126]",
+      "case": "test_tcp_read_quantity_limits[3-125-0-126]",
+      "status": "passed",
+      "duration_seconds": "0.001",
+      "expected_result_type": "边界混合（正常+异常）",
+      "coverage": "FC01/02/03/04 读数量上下限校验；非法数量返回异常(0x03)",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_read_quantity_limits[4-125-0-126]",
+      "case": "test_tcp_read_quantity_limits[4-125-0-126]",
+      "status": "passed",
+      "duration_seconds": "0.001",
+      "expected_result_type": "边界混合（正常+异常）",
+      "coverage": "FC01/02/03/04 读数量上下限校验；非法数量返回异常(0x03)",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_read_address_boundaries[1]",
+      "case": "test_tcp_read_address_boundaries[1]",
+      "status": "passed",
+      "duration_seconds": "0.001",
+      "expected_result_type": "边界混合（正常+异常）",
+      "coverage": "FC01/02/03/04 地址边界校验；越界地址返回异常(0x02)",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_read_address_boundaries[2]",
+      "case": "test_tcp_read_address_boundaries[2]",
+      "status": "passed",
+      "duration_seconds": "0.001",
+      "expected_result_type": "边界混合（正常+异常）",
+      "coverage": "FC01/02/03/04 地址边界校验；越界地址返回异常(0x02)",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_read_address_boundaries[3]",
+      "case": "test_tcp_read_address_boundaries[3]",
+      "status": "passed",
+      "duration_seconds": "0.001",
+      "expected_result_type": "边界混合（正常+异常）",
+      "coverage": "FC01/02/03/04 地址边界校验；越界地址返回异常(0x02)",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_read_address_boundaries[4]",
+      "case": "test_tcp_read_address_boundaries[4]",
+      "status": "passed",
+      "duration_seconds": "0.001",
+      "expected_result_type": "边界混合（正常+异常）",
+      "coverage": "FC01/02/03/04 地址边界校验；越界地址返回异常(0x02)",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_write_single_address_boundaries[5-'\\x0f\\xff\\x00-'\\x10\\xff\\x00]",
+      "case": "test_tcp_write_single_address_boundaries[5-'\\x0f\\xff\\x00-'\\x10\\xff\\x00]",
+      "status": "passed",
+      "duration_seconds": "0.001",
+      "expected_result_type": "边界混合（正常+异常）",
+      "coverage": "FC05/06 写单点地址边界校验；写地址越界返回异常(0x02)",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_write_single_address_boundaries[6-'\\x0f\\x13W-'\\x10\\x13W]",
+      "case": "test_tcp_write_single_address_boundaries[6-'\\x0f\\x13W-'\\x10\\x13W]",
+      "status": "passed",
+      "duration_seconds": "0.001",
+      "expected_result_type": "边界混合（正常+异常）",
+      "coverage": "FC05/06 写单点地址边界校验；写地址越界返回异常(0x02)",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_write_multi_address_boundaries[15-9998-9999-2-\\x03]",
+      "case": "test_tcp_write_multi_address_boundaries[15-9998-9999-2-\\x03]",
+      "status": "passed",
+      "duration_seconds": "0.001",
+      "expected_result_type": "边界混合（正常+异常）",
+      "coverage": "FC0F/10 批量写地址边界校验；批量写越界返回异常(0x02)",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_write_multi_address_boundaries[16-9998-9999-2-\\xaaUU\\xaa]",
+      "case": "test_tcp_write_multi_address_boundaries[16-9998-9999-2-\\xaaUU\\xaa]",
+      "status": "passed",
+      "duration_seconds": "0.001",
+      "expected_result_type": "边界混合（正常+异常）",
+      "coverage": "FC0F/10 批量写地址边界校验；批量写越界返回异常(0x02)",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_write_multi_limits_and_byte_count[15-1969-1968-\\x00-2]",
+      "case": "test_tcp_write_multi_limits_and_byte_count[15-1969-1968-\\x00-2]",
+      "status": "passed",
+      "duration_seconds": "0.141",
+      "expected_result_type": "边界混合（正常+异常）",
+      "coverage": "FC0F/10 数量限制与字节计数一致性；非法数量/字节数返回异常(0x03)",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_write_multi_limits_and_byte_count[16-124-123-\\x124-1]",
+      "case": "test_tcp_write_multi_limits_and_byte_count[16-124-123-\\x124-1]",
+      "status": "passed",
+      "duration_seconds": "0.003",
+      "expected_result_type": "边界混合（正常+异常）",
+      "coverage": "FC0F/10 数量限制与字节计数一致性；非法数量/字节数返回异常(0x03)",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_short_request_pdu_returns_illegal_data_value[1-\\x00\\x00\\x00]",
+      "case": "test_tcp_short_request_pdu_returns_illegal_data_value[1-\\x00\\x00\\x00]",
+      "status": "passed",
+      "duration_seconds": "0.001",
+      "expected_result_type": "异常响应（预期异常）",
+      "coverage": "请求 PDU 长度不足处理；长度错误返回异常(0x03)",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_short_request_pdu_returns_illegal_data_value[2-\\x00\\x00\\x00]",
+      "case": "test_tcp_short_request_pdu_returns_illegal_data_value[2-\\x00\\x00\\x00]",
+      "status": "passed",
+      "duration_seconds": "0.001",
+      "expected_result_type": "异常响应（预期异常）",
+      "coverage": "请求 PDU 长度不足处理；长度错误返回异常(0x03)",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_short_request_pdu_returns_illegal_data_value[3-\\x00\\x00\\x00]",
+      "case": "test_tcp_short_request_pdu_returns_illegal_data_value[3-\\x00\\x00\\x00]",
+      "status": "passed",
+      "duration_seconds": "0.001",
+      "expected_result_type": "异常响应（预期异常）",
+      "coverage": "请求 PDU 长度不足处理；长度错误返回异常(0x03)",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_short_request_pdu_returns_illegal_data_value[4-\\x00\\x00\\x00]",
+      "case": "test_tcp_short_request_pdu_returns_illegal_data_value[4-\\x00\\x00\\x00]",
+      "status": "passed",
+      "duration_seconds": "0.001",
+      "expected_result_type": "异常响应（预期异常）",
+      "coverage": "请求 PDU 长度不足处理；长度错误返回异常(0x03)",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_short_request_pdu_returns_illegal_data_value[5-\\x00\\x00\\x00]",
+      "case": "test_tcp_short_request_pdu_returns_illegal_data_value[5-\\x00\\x00\\x00]",
+      "status": "passed",
+      "duration_seconds": "0.001",
+      "expected_result_type": "异常响应（预期异常）",
+      "coverage": "请求 PDU 长度不足处理；长度错误返回异常(0x03)",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_short_request_pdu_returns_illegal_data_value[6-\\x00\\x00\\x00]",
+      "case": "test_tcp_short_request_pdu_returns_illegal_data_value[6-\\x00\\x00\\x00]",
+      "status": "passed",
+      "duration_seconds": "0.001",
+      "expected_result_type": "异常响应（预期异常）",
+      "coverage": "请求 PDU 长度不足处理；长度错误返回异常(0x03)",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_short_request_pdu_returns_illegal_data_value[15-\\x00\\x00\\x00\\x00]",
+      "case": "test_tcp_short_request_pdu_returns_illegal_data_value[15-\\x00\\x00\\x00\\x00]",
+      "status": "passed",
+      "duration_seconds": "0.001",
+      "expected_result_type": "异常响应（预期异常）",
+      "coverage": "请求 PDU 长度不足处理；长度错误返回异常(0x03)",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_tcp_short_request_pdu_returns_illegal_data_value[16-\\x00\\x00\\x00\\x00]",
+      "case": "test_tcp_short_request_pdu_returns_illegal_data_value[16-\\x00\\x00\\x00\\x00]",
+      "status": "passed",
+      "duration_seconds": "0.001",
+      "expected_result_type": "异常响应（预期异常）",
+      "coverage": "请求 PDU 长度不足处理；长度错误返回异常(0x03)",
+      "assertion_output": ""
+    },
+    {
+      "node": "test_protocol_regression::test_rtu_single_register_roundtrip",
+      "case": "test_rtu_single_register_roundtrip",
+      "status": "skipped",
+      "duration_seconds": "0.000",
+      "expected_result_type": "正常响应",
+      "coverage": "RTU FC06/FC03 往返验证；RTU CRC16 校验；RTU 从站地址一致性",
+      "assertion_output": "RTU port not provided"
+    }
+  ]
+}
