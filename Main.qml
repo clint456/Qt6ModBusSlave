@@ -470,6 +470,26 @@ ApplicationWindow {
                     }
 
                     Label {
+                        text: "从站ID:"
+                        color: root.bodyText
+                        font.bold: false
+                    }
+                    IndustrialSpinBox {
+                        id: slaveIdSpinBox
+                        from: 0
+                        to: 247
+                        value: modbusServer ? modbusServer.slaveId : 1
+                        Layout.preferredWidth: 90
+                        onValueChanged: {
+                            if (modbusServer) {
+                                modbusServer.slaveId = value;
+                            }
+                        }
+                        ToolTip.visible: hovered
+                        ToolTip.text: "0 表示接受所有从站ID"
+                    }
+
+                    Label {
                         text: "状态消息:"
                         color: root.bodyText
                         font.bold: false

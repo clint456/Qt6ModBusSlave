@@ -12,7 +12,15 @@
 #include <QUrl>
 
 ModbusServer::ModbusServer(QObject *parent)
-    : QObject(parent), m_tcpServer(nullptr), m_serialPort(nullptr), m_rtuTimer(nullptr), m_running(false), m_mode(ModeTCP), m_requestCount(0), m_lastFunctionCode(0)
+    : QObject(parent)
+    , m_tcpServer(nullptr)
+    , m_serialPort(nullptr)
+    , m_rtuTimer(nullptr)
+    , m_running(false)
+    , m_mode(ModeTCP)
+    , m_requestCount(0)
+    , m_lastFunctionCode(0)
+    , m_slaveId(1)
 {
     // 创建数据存储
     m_dataStore = new ModbusDataStore(this); // 加上this可用进行自动管理子对象生命周期
@@ -170,6 +178,11 @@ QByteArray ModbusServer::processTcpRequest(const QByteArray &adu)
 
     // 验证协议 ID
     if (protocolId != 0)
+    {
+        return QByteArray();
+    }
+
+    if (m_slaveId != 0 && unitId != static_cast<quint8>(m_slaveId))
     {
         return QByteArray();
     }
@@ -374,6 +387,16 @@ QByteArray ModbusServer::processRtuRequest(const QByteArray &adu)
     QByteArray pdu = adu.mid(1, adu.size() - 3);
     quint8 functionCode = static_cast<quint8>(pdu[0]);
 
+    if (slaveAddress == 0)
+    {
+        return QByteArray();
+    }
+
+    if (m_slaveId != 0 && slaveAddress != static_cast<quint8>(m_slaveId))
+    {
+        return QByteArray();
+    }
+
     // 路由到对应功能处理器
     QByteArray responsePdu = routeFunctionCode(functionCode, pdu);
     if (responsePdu.isEmpty())
@@ -393,6 +416,27 @@ QByteArray ModbusServer::processRtuRequest(const QByteArray &adu)
 
     emit packetSent(formatPacket(responseAdu, "→ RTU发送"));
     return responseAdu;
+}
+
+void ModbusServer::setSlaveId(int slaveId)
+{
+    if (slaveId < 0)
+    {
+        return;
+    }
+
+    if (slaveId > 247)
+    {
+        slaveId = 247;
+    }
+
+    if (m_slaveId == slaveId)
+    {
+        return;
+    }
+
+    m_slaveId = slaveId;
+    emit slaveIdChanged(m_slaveId);
 }
 
 quint16 ModbusServer::calculateCRC(const QByteArray &data)

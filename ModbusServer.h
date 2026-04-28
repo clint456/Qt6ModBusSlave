@@ -32,6 +32,7 @@ class ModbusServer : public QObject
     Q_PROPERTY(QString statusMessage READ statusMessage NOTIFY statusMessageChanged)
     Q_PROPERTY(int requestCount READ requestCount NOTIFY requestCountChanged)
     Q_PROPERTY(int lastFunctionCode READ lastFunctionCode NOTIFY lastFunctionCodeChanged)
+    Q_PROPERTY(int slaveId READ slaveId WRITE setSlaveId NOTIFY slaveIdChanged)
     Q_PROPERTY(ModbusDataStore *dataStore READ dataStore CONSTANT)
 
 public:
@@ -75,6 +76,8 @@ public:
     QString statusMessage() const { return m_statusMessage; }
     int requestCount() const { return m_requestCount; }
     int lastFunctionCode() const { return m_lastFunctionCode; }
+    int slaveId() const { return m_slaveId; }
+    void setSlaveId(int slaveId);
 
     // 获取数据存储对象（用于UI更新）
     ModbusDataStore *dataStore() const { return m_dataStore; }
@@ -89,6 +92,7 @@ signals:
     void errorOccurred(const QString &error);
     void packetReceived(const QString &packet);
     void packetSent(const QString &packet);
+    void slaveIdChanged(int slaveId);
     // 内存使用警告信号
     void memoryWarning(size_t totalItems, const QString &report);
 
@@ -131,6 +135,7 @@ private:
     QString m_statusMessage;
     int m_requestCount;
     int m_lastFunctionCode;
+    int m_slaveId;
 };
 
 #endif // MODBUSSERVER_H
