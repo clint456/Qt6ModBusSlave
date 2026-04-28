@@ -489,9 +489,9 @@ ApplicationWindow {
             GroupBox {
                 title: "文件寄存器与传感器配置"
                 Layout.fillWidth: true
-                Layout.fillHeight: false
-                Layout.preferredHeight: contentLayout.implicitHeight + 44
-                Layout.minimumHeight: 300
+                Layout.fillHeight: true
+                Layout.minimumHeight: 500
+                Layout.preferredHeight: root.height - serverStatusBox.height - 200
                 font.bold: false
                 padding: 10
                 topPadding: 30
@@ -567,8 +567,7 @@ ApplicationWindow {
 
                     StackLayout {
                         Layout.fillWidth: true
-                        Layout.fillHeight: false
-                        Layout.preferredHeight: currentItem ? currentItem.implicitHeight : 0
+                        Layout.fillHeight: true
                         currentIndex: dataTabBar.currentIndex
                         // Tab 1: 文件寄存器
                         Item {
@@ -869,6 +868,43 @@ ApplicationWindow {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
                                             clip: true
+                                            // 1. 移除 AlwaysOff，改用自定义样式让它“悬浮”
+                                            ScrollBar.vertical: ScrollBar {
+                                                // 只有当内容真的超出时才显示
+                                                policy: ScrollBar.AsNeeded 
+                                                
+                                                // 2. 关键：背景透明，这样它就不会占据 Layout 的高度
+                                                background: Rectangle {
+                                                    color: "transparent"
+                                                    width: 10 // 这里的宽度仅影响鼠标感应区，视觉上不可见
+                                                }
+                                                
+                                                // 3. 定义滑块的样子 (可选，保持美观)
+                                                contentItem: Rectangle {
+                                                    implicitWidth: 8
+                                                    color: "#cdcdcd"
+                                                    radius: width / 2
+                                                    opacity: 0.0 // 默认隐藏
+                                                    // 鼠标悬停或滚动时显示 (简单处理：始终半透明可见，或者根据需要加状态机)
+                                                    states: State {
+                                                        name: "active"
+                                                        when: sensorTableFlick.ScrollBar.active
+                                                        PropertyChanges { target: sensorTableFlick.ScrollBar.contentItem; opacity: 0.75 }
+                                                    }
+                                                }
+                                            }
+            
+                                            ScrollBar.horizontal: ScrollBar {
+                                                policy: ScrollBar.AsNeeded
+                                                background: Rectangle { color: "transparent" }
+                                                contentItem: Rectangle {
+                                                    implicitHeight: 8
+                                                    color: "#cdcdcd"
+                                                    radius: height / 2
+                                                    opacity: sensorTableFlick.ScrollBar.horizontal.active ? 0.75 : 0.0
+                                                }
+                                            }
+
                                             contentWidth: Math.max(width, root.sensorTableMinWidth)
                                             contentHeight: height
                                             flickableDirection: Flickable.HorizontalFlick
@@ -1170,7 +1206,6 @@ ApplicationWindow {
                                                 ScrollBar.vertical: IndustrialScrollBar {}
                                             }
 
-                                            ScrollBar.horizontal: IndustrialScrollBar {}
                                         }
                                     }
                                 }
